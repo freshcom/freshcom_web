@@ -26,9 +26,20 @@ defmodule FreshcomWeb.ConnCase do
     end
   end
 
+  setup tags do
+    {:ok, _} = Application.ensure_all_started(:freshcom)
 
-  setup _tags do
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Freshcom.Repo)
+    unless tags[:async] do
+      Ecto.Adapters.SQL.Sandbox.mode(Freshcom.Repo, {:shared, self()})
+    end
+
+    on_exit(fn ->
+      :ok = Application.stop(:commanded)
+
+      FCBase.EventStore.reset!()
+    end)
+
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
-
 end

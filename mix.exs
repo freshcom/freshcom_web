@@ -38,7 +38,8 @@ defmodule FreshcomWeb.Mixfile do
       {:cowboy, "~> 1.0"},
       {:jose, "~> 1.8.3"},
       {:ja_serializer, github: "vt-elixir/ja_serializer", branch: "master"},
-      {:freshcom, path: "../freshcom"}
+      {:freshcom, path: "../freshcom"},
+      {:faker, "~> 0.11", only: [:test, :dev]}
     ]
   end
 end

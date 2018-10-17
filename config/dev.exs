@@ -1,12 +1,21 @@
 use Mix.Config
 
-#######
 config :eventstore, EventStore.Storage,
   serializer: Commanded.Serialization.JsonSerializer,
   username: System.get_env("DB_USERNAME"),
   database: "freshcom_eventstore_dev",
   hostname: "localhost",
   pool_size: 10
+
+config :commanded_ecto_projections,
+  repo: Freshcom.Repo
+
+# Do not include metadata nor timestamps in development logs
+config :logger, :console, format: "[$level] $message\n"
+
+# Set a higher stacktrace during development. Avoid configuring such
+# in production as building large stacktraces may be expensive.
+config :phoenix, :stacktrace_depth, 20
 
 config :fc_state_storage, adapter: FCStateStorage.DynamoAdapter
 
@@ -17,17 +26,6 @@ config :freshcom, Freshcom.Repo,
   username: System.get_env("DB_USERNAME"),
   pool_size: 10
 
-config :commanded_ecto_projections,
-  repo: Freshcom.Repo
-########
-
-
-# For development, we disable any cache and enable
-# debugging and code reloading.
-#
-# The watchers configuration can be used to run external
-# watchers to your application. For example, we use it
-# with brunch.io to recompile .js and .css sources.
 config :freshcom_web, FreshcomWeb.Endpoint,
   http: [port: 4000],
   debug_errors: true,
@@ -50,10 +48,3 @@ config :freshcom_web, FreshcomWeb.Endpoint,
 # If desired, both `http:` and `https:` keys can be
 # configured to run both http and https servers on
 # different ports.
-
-# Do not include metadata nor timestamps in development logs
-config :logger, :console, format: "[$level] $message\n"
-
-# Set a higher stacktrace during development. Avoid configuring such
-# in production as building large stacktraces may be expensive.
-config :phoenix, :stacktrace_depth, 20

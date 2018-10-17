@@ -23,6 +23,8 @@ defmodule FreshcomWeb do
       import Plug.Conn
       import FreshcomWeb.Router.Helpers
       import FreshcomWeb.Gettext
+
+      alias Freshcom.Request
     end
   end
 

@@ -2,7 +2,7 @@ defmodule FreshcomWeb.UserController do
   use FreshcomWeb, :controller
 
   alias JaSerializer.Params
-  alias Freshcom.Request
+  alias Freshcom.Identity
   alias FreshcomWeb.Normalization
 
   action_fallback FreshcomWeb.FallbackController
@@ -15,7 +15,7 @@ defmodule FreshcomWeb.UserController do
       |> Params.to_attributes()
       |> Normalization.underscore(["role"])
 
-    response = Freshcom.register_user(%Request{
+    response = Identity.register_user(%Request{
       requester: conn.assigns[:requester],
       fields: fields
     })
