@@ -13,7 +13,6 @@ defmodule FreshcomWeb.UserController do
     fields =
       params["data"]
       |> Params.to_attributes()
-      |> Normalization.underscore(["role"])
 
     response = Identity.register_user(%Request{
       requester: conn.assigns[:requester],

@@ -10,13 +10,7 @@ defmodule FreshcomWeb.UserControllerTest do
     %{conn: conn}
   end
 
-  # Register a user
-  #
-
-  # Create a user
-  # - Without UAT this endpoint create a standard user (internal)
-  # - With UAT this endpoint create a managed user
-  describe "(RegsiterUser) POST /v1/users" do
+  describe "(RegisterUser) POST /v1/users" do
     test "with no attributes", %{conn: conn} do
       conn = post(conn, "/v1/users", %{
         "data" => %{
@@ -28,22 +22,24 @@ defmodule FreshcomWeb.UserControllerTest do
       assert length(response["errors"]) > 0
     end
 
-    # test "with valid attributes", %{conn: conn} do
-    #   email = Faker.Internet.email()
-    #   conn = post(conn, "/v1/users", %{
-    #     "data" => %{
-    #       "type" => "User",
-    #       "attributes" => %{
-    #         "name" => Faker.Name.name(),
-    #         "username" => email,
-    #         "email" => email,
-    #         "password" => "test1234"
-    #       }
-    #     }
-    #   })
+    test "with valid attributes", %{conn: conn} do
+      email = Faker.Internet.email()
+      conn = post(conn, "/v1/users", %{
+        "data" => %{
+          "type" => "User",
+          "attributes" => %{
+            "name" => Faker.Name.name(),
+            "username" => email,
+            "email" => email,
+            "password" => "test1234",
+            "isTermAccepted" => true
+          }
+        }
+      })
 
-    #   assert conn.status == 201
-    # end
+      assert body = json_response(conn, 201)
+      assert body["data"]["id"]
+    end
 
     # test "without access token should create standard user", %{conn: conn} do
     #   email = Faker.Internet.email()
