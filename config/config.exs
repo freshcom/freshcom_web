@@ -48,6 +48,9 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:user_id]
 
+config :ja_serializer,
+  key_format: {:custom, FreshcomWeb.Normalization, :camelize, :underscore}
+
 config :phoenix, :format_encoders,
   "json-api": Poison
 

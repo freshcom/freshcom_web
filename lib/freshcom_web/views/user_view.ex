@@ -3,7 +3,14 @@ defmodule FreshcomWeb.UserView do
   use JaSerializer.PhoenixView
 
   attributes [
-    :name
+    :status,
+    :email,
+    :username,
+    :first_name,
+    :last_name,
+    :name,
+    :role,
+    :email_verified
   ]
 
   def type do

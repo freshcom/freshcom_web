@@ -1,5 +1,5 @@
 defmodule FreshcomWeb.Normalization do
-  def underscore(map, keys) do
+  def underscore(map, keys) when is_map(map) do
     Enum.reduce(map, map, fn({k, v}, acc) ->
       if Enum.member?(keys, k) && acc[k] do
         %{acc | k => Inflex.underscore(v)}
@@ -7,6 +7,14 @@ defmodule FreshcomWeb.Normalization do
         acc
       end
     end)
+  end
+
+  def underscore(str) when is_binary(str) do
+    Inflex.underscore(str)
+  end
+
+  def camelize(str) do
+    Inflex.camelize(str, :lower)
   end
 
   def errors(errors) do

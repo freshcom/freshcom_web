@@ -21,6 +21,11 @@ defmodule FreshcomWeb.UserController do
     })
 
     case response do
+      {:ok, %{data: user}} ->
+        conn
+        |> put_status(:created)
+        |> render("show.json-api", data: user)
+
       {:error, %{errors: errors}} ->
         conn
         |> put_status(:unprocessable_entity)
