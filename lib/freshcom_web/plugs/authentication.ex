@@ -17,7 +17,7 @@ defmodule FreshcomWeb.AuthenticationPlug do
       true -> conn
       _ ->
         if Enum.member?(exception_paths, conn.request_path) do
-          assign(conn, :requester, %{requester_id: nil, account_id: nil})
+          assign(conn, :requester, %{id: nil, account_id: nil})
         else
           halt send_resp(conn, 401, "")
         end
