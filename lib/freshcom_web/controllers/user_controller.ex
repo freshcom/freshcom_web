@@ -9,15 +9,12 @@ defmodule FreshcomWeb.UserController do
 
   plug :scrub_params, "data" when action in [:create, :update]
 
-  def create(%{assigns: %{requester: %{account_id: nil}}} = conn, %{"data" => %{"type" => "User"}} = params) do
+  def create(%{assigns: %{account_id: nil}} = conn, %{"data" => %{"type" => "User"}} = params) do
     fields =
       params["data"]
       |> Params.to_attributes()
 
-    response = Identity.register_user(%Request{
-      requester: conn.assigns[:requester],
-      fields: fields
-    })
+    response = Identity.register_user(%Request{fields: fields})
 
     case response do
       {:ok, %{data: user}} ->
