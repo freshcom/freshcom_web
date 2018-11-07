@@ -9,15 +9,20 @@ defmodule FreshcomWeb.AuthenticationPlug do
     with [auth] <- get_req_header(conn, "authorization"),
          ["Bearer", access_token] <- String.split(auth),
          {:ok, access_token_payload} <- verify_access_token(access_token),
-         {:ok, requester} <- extract_requester(access_token_payload)
+         {:ok, vas} <- extract_vas(access_token_payload)
     do
-      Logger.info("Requester: #{inspect requester}")
-      assign(conn, :requester, requester)
+      Logger.info("VAS: #{inspect vas}")
+
+      conn
+      |> assign(:requester_id, vas[:requester_id])
+      |> assign(:account_id, vas[:account_id])
     else
       true -> conn
       _ ->
         if Enum.member?(exception_paths, conn.request_path) do
-          assign(conn, :requester, %{id: nil, account_id: nil})
+          conn
+          |> assign(:requester_id, nil)
+          |> assign(:account_id, nil)
         else
           halt send_resp(conn, 401, "")
         end
@@ -35,10 +40,10 @@ defmodule FreshcomWeb.AuthenticationPlug do
     end
   end
 
-  def extract_requester(%{"prn" => user_id, "aud" => account_id, "typ" => "user"}) do
-    {:ok, %{user_id: user_id, account_id: account_id}}
+  def extract_vas(%{"prn" => rid, "aud" => account_id, "typ" => "user"}) do
+    {:ok, %{requester_id: rid, account_id: account_id}}
   end
-  def extract_requester(%{"prn" => account_id, "typ" => "publishable"}) do
-    {:ok, %{user_id: nil, account_id: account_id}}
+  def extract_vas(%{"prn" => account_id, "typ" => "publishable"}) do
+    {:ok, %{requester_id: nil, account_id: account_id}}
   end
 end
