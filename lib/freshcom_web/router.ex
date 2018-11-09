@@ -12,7 +12,7 @@ defmodule FreshcomWeb.Router do
 
     options "/*path", WelcomeController, :options
 
-    resources "/users", UserController, only: [:create, :show, :update, :delete]
+    resources "/users", UserController, only: [:index, :create, :show, :update, :delete]
     post "/token", TokenController, :create
   end
 end

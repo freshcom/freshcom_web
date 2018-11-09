@@ -17,7 +17,13 @@ defmodule FreshcomWeb.Normalization do
     Inflex.camelize(str, :lower)
   end
 
-  def errors(errors) do
+  def camelize_keys(map) do
+    Enum.reduce(map, %{}, fn({key, value}, acc) ->
+      Map.put(acc, camelize(key), value)
+    end)
+  end
+
+  def to_jsonapi_errors(errors) do
     Enum.reduce(errors, [], fn(error, acc) ->
       case error do
         {:error, key, {reason, meta}} ->
