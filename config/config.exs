@@ -29,9 +29,6 @@ config :ja_serializer,
 config :phoenix, :format_encoders,
   "json-api": Poison
 
-config :phoenix, FreshcomWeb.Endpoint,
-  render_errors: [view: FreshcomWeb.ErrorView, accepts: ~w(html json json-api)]
-
 config :mime, :types, %{
   "application/vnd.api+json" => ["json-api"]
 }
@@ -51,7 +48,7 @@ config :freshcom,
 config :freshcom_web, FreshcomWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "64CU1PkjCevE/bs5bYBJhr3w9FRnu+S5t1v7clGHubugExpdRU3zPTLoSIIRmm4v",
-  render_errors: [view: FreshcomWeb.ErrorView, accepts: ~w(json)],
+  render_errors: [view: FreshcomWeb.ErrorView, accepts: ~w(json-api json)],
   pubsub: [name: FreshcomWeb.PubSub,
            adapter: Phoenix.PubSub.PG2]
 
