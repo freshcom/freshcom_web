@@ -4,6 +4,7 @@ defmodule FreshcomWeb.Router do
   pipeline :api do
     plug :accepts, ["json-api"]
     plug FreshcomWeb.AuthenticationPlug, ["/v1/token", "/v1/users", "/v1/password_reset_tokens", "/v1/email_verifications", "/v1/password"]
+    plug FreshcomWeb.PaginationPlug
     plug JaSerializer.Deserializer
   end
 
