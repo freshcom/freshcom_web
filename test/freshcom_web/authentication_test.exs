@@ -1,34 +1,9 @@
 defmodule FreshcomWeb.AuthenticationTest do
   use FreshcomWeb.ConnCase
 
-  import Freshcom.Fixture
+  import Freshcom.{Fixture, Shortcut}
 
   alias FreshcomWeb.Authentication
-  alias Freshcom.Identity
-
-  defp get_urt(account_id, user_id) do
-    req = %Request{
-      account_id: account_id,
-      identifiers: %{"user_id" => user_id},
-      _role_: "system"
-    }
-
-    {:ok, %{data: urt}} = Identity.get_refresh_token(req)
-
-    urt
-  end
-
-  defp get_prt(account_id) do
-    req = %Request{
-      account_id: account_id,
-      identifiers: %{"user_id" => nil},
-      _role_: "system"
-    }
-
-    {:ok, %{data: prt}} = Identity.get_refresh_token(req)
-
-    prt
-  end
 
   test "create_access_token/1 given invalid refresh token" do
     input = %{
