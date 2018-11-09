@@ -19,7 +19,11 @@ defmodule FreshcomWeb.ConnCase do
     quote do
       # Import conveniences for testing with connections
       use Phoenix.ConnTest
+
       import FreshcomWeb.Router.Helpers
+      import UUID
+
+      alias Freshcom.Request
 
       # The default endpoint for testing
       @endpoint FreshcomWeb.Endpoint

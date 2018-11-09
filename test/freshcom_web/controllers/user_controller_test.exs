@@ -10,6 +10,22 @@ defmodule FreshcomWeb.UserControllerTest do
     %{conn: conn}
   end
 
+  defp register_user() do
+    request = %Request{
+      fields: %{
+        name: Faker.Name.name(),
+        username: Faker.Internet.user_name(),
+        email: Faker.Internet.email(),
+        password: Faker.String.base64(12),
+        is_term_accepted: true
+      }
+    }
+
+    {:ok, %{data: user}} = Identity.register_user(request)
+
+    user
+  end
+
   describe "(RegisterUser) POST /v1/users" do
     test "with no attributes", %{conn: conn} do
       conn = post(conn, "/v1/users", %{
@@ -79,6 +95,10 @@ defmodule FreshcomWeb.UserControllerTest do
 
     #   json_response(conn, 201)
     # end
+  end
+
+  describe "(AddUser) POST /v1/users" do
+
   end
 
   # # Retrieve current user
