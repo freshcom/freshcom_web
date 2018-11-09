@@ -1,41 +1,10 @@
 defmodule FreshcomWeb.AuthenticationTest do
   use FreshcomWeb.ConnCase
 
+  import Freshcom.Fixture
+
   alias FreshcomWeb.Authentication
   alias Freshcom.Identity
-
-  defp register_user(opts \\ []) do
-    req = %Request{
-      fields: %{
-        name: Faker.Name.name(),
-        username: Faker.Internet.user_name(),
-        email: Faker.Internet.email(),
-        password: "test1234",
-        is_term_accepted: true
-      },
-      include: opts[:include]
-    }
-
-    {:ok, %{data: user}} = Identity.register_user(req)
-
-    user
-  end
-
-  defp add_user(account_id) do
-    req = %Request{
-      account_id: account_id,
-      fields: %{
-        "username" => Faker.Internet.user_name(),
-        "role" => "developer",
-        "password" => "test1234"
-      },
-      _role_: "sysdev"
-    }
-
-    {:ok, %{data: user}} = Identity.add_user(req)
-
-    user
-  end
 
   defp get_urt(account_id, user_id) do
     req = %Request{
@@ -72,7 +41,7 @@ defmodule FreshcomWeb.AuthenticationTest do
 
   describe "create_access_token/1 given live urt" do
     test "and no scope" do
-      user = register_user()
+      user = standard_user()
       urt = get_urt(user.default_account_id, user.id)
       input = %{
         "grant_type" => "refresh_token",
@@ -87,7 +56,7 @@ defmodule FreshcomWeb.AuthenticationTest do
     end
 
     test "and scope on test account" do
-      user = register_user(include: "default_account")
+      user = standard_user(include: "default_account")
       live_account_id = user.default_account_id
       test_account_id = user.default_account.test_account_id
       urt_live = get_urt(live_account_id, user.id)
@@ -108,7 +77,7 @@ defmodule FreshcomWeb.AuthenticationTest do
   end
 
   test "create_access_token/1 given live prt and no scope" do
-    user = register_user()
+    user = standard_user()
     prt = get_prt(user.default_account_id)
     input = %{
       "grant_type" => "refresh_token",
@@ -147,7 +116,7 @@ defmodule FreshcomWeb.AuthenticationTest do
 
   describe "create_access_token/1 given correct standard user credentials" do
     test "and no scope" do
-      user = register_user()
+      user = standard_user()
       urt = get_urt(user.default_account_id, user.id)
       input = %{
         "grant_type" => "password",
@@ -163,7 +132,7 @@ defmodule FreshcomWeb.AuthenticationTest do
     end
 
     test "and scope" do
-      user = register_user()
+      user = standard_user()
       input = %{
         "grant_type" => "password",
         "username" => user.username,
@@ -177,8 +146,8 @@ defmodule FreshcomWeb.AuthenticationTest do
 
   describe "create_access_token/1 given correct managed user credentials" do
     test "and no scope" do
-      %{default_account_id: account_id} = register_user()
-      user = add_user(account_id)
+      %{default_account_id: account_id} = standard_user()
+      user = managed_user(account_id)
 
       input = %{
         "grant_type" => "password",
@@ -190,9 +159,9 @@ defmodule FreshcomWeb.AuthenticationTest do
     end
 
     test "and invalid scope" do
-      %{default_account_id: account_id} = register_user()
-      user = add_user(account_id)
-      %{default_account_id: other_account_id} = register_user()
+      %{default_account_id: account_id} = standard_user()
+      user = managed_user(account_id)
+      %{default_account_id: other_account_id} = standard_user()
 
       input = %{
         "grant_type" => "password",
@@ -205,8 +174,8 @@ defmodule FreshcomWeb.AuthenticationTest do
     end
 
     test "and valid scope" do
-      %{default_account_id: account_id} = register_user()
-      user = add_user(account_id)
+      %{default_account_id: account_id} = standard_user()
+      user = managed_user(account_id)
       urt = get_urt(account_id, user.id)
 
       input = %{
