@@ -6,6 +6,18 @@ defmodule FreshcomWeb.Controller do
   alias JaSerializer.Params
   alias Freshcom.Request
 
+  def build_request(%{assigns: assigns, params: params}, :index) do
+    %Request{
+      requester_id: assigns[:requester_id],
+      account_id: assigns[:account_id],
+      search: params["search"],
+      filter: params["filter"] || [],
+      pagination: assigns[:pagination],
+      include: params["include"],
+      locale: params["locale"]
+    }
+  end
+
   def build_request(%{assigns: assigns, params: params}, :create) do
     %Request{
       requester_id: assigns[:requester_id],

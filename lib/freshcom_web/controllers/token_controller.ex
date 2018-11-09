@@ -16,6 +16,8 @@ defmodule FreshcomWeb.TokenController do
         conn
         |> put_status(:bad_request)
         |> json(errors)
+
+      other -> other
     end
   end
 end
