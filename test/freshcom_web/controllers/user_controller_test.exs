@@ -42,45 +42,6 @@ defmodule FreshcomWeb.UserControllerTest do
       assert body = json_response(conn, 201)
       assert body["data"]["id"]
     end
-
-    # test "without access token should create standard user", %{conn: conn} do
-    #   email = Faker.Internet.email()
-    #   conn = post(conn, "/v1/users", %{
-    #     "data" => %{
-    #       "type" => "User",
-    #       "attributes" => %{
-    #         "name" => Faker.Name.name(),
-    #         "username" => email,
-    #         "email" => email,
-    #         "password" => "standard123"
-    #       }
-    #     }
-    #   })
-
-    #   assert conn.status == 204
-    # end
-
-    # test "with UAT should create managed user", %{conn: conn} do
-    #   user = standard_user_fixture()
-    #   uat = get_uat(user.default_account, user)
-
-    #   email = Faker.Internet.email()
-    #   conn = put_req_header(conn, "authorization", "Bearer #{uat}")
-    #   conn = post(conn, "/v1/users", %{
-    #     "data" => %{
-    #       "type" => "User",
-    #       "attributes" => %{
-    #         "name" => Faker.Name.name(),
-    #         "username" => email,
-    #         "email" => email,
-    #         "password" => "standard123",
-    #         "role" => "developer"
-    #       }
-    #     }
-    #   })
-
-    #   json_response(conn, 201)
-    # end
   end
 
   describe "(AddUser) POST /v1/users" do
@@ -146,93 +107,48 @@ defmodule FreshcomWeb.UserControllerTest do
     end
 
     test "given uat", %{conn: conn} do
-      user = standard_user()
-      uat = get_uat(user.default_account_id, user.id)
+      requester = standard_user()
+      uat = get_uat(requester.default_account_id, requester.id)
 
       conn = put_req_header(conn, "authorization", "Bearer #{uat}")
       conn = get(conn, "/v1/user")
 
       assert response = json_response(conn, 200)
-      assert response["data"]["id"] == user.id
+      assert response["data"]["id"] == requester.id
     end
   end
 
-  # # Retrieve current user
-  # describe "GET /v1/user" do
-  #   test "without UAT", %{conn: conn} do
-  #     conn = get(conn, "/v1/user")
+  describe "(RetrieveUser) GET /v1/users/:id" do
+    test "given no access token", %{conn: conn} do
+      conn = get(conn, "/v1/users/#{uuid4()}")
 
-  #     assert conn.status == 401
-  #   end
+      assert conn.status == 401
+    end
 
-  #   test "with UAT", %{conn: conn} do
-  #     user = standard_user_fixture()
-  #     uat = get_uat(user.default_account, user)
+    test "given unauthorized uat", %{conn: conn} do
+      %{default_account_id: account_id} = standard_user()
+      requester = managed_user(account_id)
+      user = managed_user(account_id)
+      uat = get_uat(account_id, requester.id)
 
-  #     conn = put_req_header(conn, "authorization", "Bearer #{uat}")
-  #     conn = get(conn, "/v1/user")
+      conn = put_req_header(conn, "authorization", "Bearer #{uat}")
+      conn = get(conn, "/v1/users/#{user.id}")
 
-  #     response = json_response(conn, 200)
-  #     assert response["data"]["id"] == user.id
-  #   end
+      assert conn.status == 403
+    end
 
-  #   test "with test UAT", %{conn: conn} do
-  #     user = standard_user_fixture()
-  #     test_account = user.default_account.test_account
-  #     uat = get_uat(test_account, user)
+    test "given valid uat", %{conn: conn} do
+      requester = standard_user()
+      user = managed_user(requester.default_account_id)
+      uat = get_uat(requester.default_account_id, requester.id)
 
-  #     conn = put_req_header(conn, "authorization", "Bearer #{uat}")
-  #     conn = get(conn, "/v1/user")
+      conn = put_req_header(conn, "authorization", "Bearer #{uat}")
+      conn = get(conn, "/v1/users/#{user.id}")
 
-  #     response = json_response(conn, 200)
-  #     assert response["data"]["id"] == user.id
-  #   end
-  # end
-
-  # # Retrieve a managed user
-  # describe "GET /v1/users/:id" do
-  #   test "without UAT", %{conn: conn} do
-  #     conn = get(conn, "/v1/users/#{UUID.generate()}")
-
-  #     assert conn.status == 401
-  #   end
-
-  #   test "with UAT targeting a standard user", %{conn: conn} do
-  #     user1 = standard_user_fixture()
-  #     user2 = standard_user_fixture()
-  #     uat = get_uat(user1.default_account, user1)
-
-  #     conn = put_req_header(conn, "authorization", "Bearer #{uat}")
-  #     conn = get(conn, "/v1/users/#{user2.id}")
-
-  #     # This endpoint should not expose standard user
-  #     assert conn.status == 404
-  #   end
-
-  #   test "with UAT targeting a managed user", %{conn: conn} do
-  #     standard_user = standard_user_fixture()
-  #     managed_user = managed_user_fixture(standard_user.default_account)
-  #     uat = get_uat(standard_user.default_account, standard_user)
-
-  #     conn = put_req_header(conn, "authorization", "Bearer #{uat}")
-  #     conn = get(conn, "/v1/users/#{managed_user.id}")
-
-  #     response = json_response(conn, 200)
-  #     assert response["data"]["id"] == managed_user.id
-  #   end
-
-  #   test "with test UAT targeting a live managed user", %{conn: conn} do
-  #     standard_user = standard_user_fixture()
-  #     managed_user = managed_user_fixture(standard_user.default_account)
-  #     test_account = standard_user.default_account.test_account
-  #     uat = get_uat(test_account, standard_user)
-
-  #     conn = put_req_header(conn, "authorization", "Bearer #{uat}")
-  #     conn = get(conn, "/v1/users/#{managed_user.id}")
-
-  #     assert conn.status == 404
-  #   end
-  # end
+      assert response = json_response(conn, 200)
+      assert response["data"]["id"] == user.id
+    end
+  end
 
   # # Update current user
   # describe "PATCH /v1/user" do
