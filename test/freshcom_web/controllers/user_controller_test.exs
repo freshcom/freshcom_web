@@ -1,5 +1,7 @@
 defmodule FreshcomWeb.UserControllerTest do
   use FreshcomWeb.ConnCase
+  import Freshcom.Fixture
+  import FreshcomWeb.Shortcut
 
   setup do
     conn =
@@ -11,7 +13,7 @@ defmodule FreshcomWeb.UserControllerTest do
   end
 
   describe "(RegisterUser) POST /v1/users" do
-    test "with no attributes", %{conn: conn} do
+    test "given no attributes", %{conn: conn} do
       conn = post(conn, "/v1/users", %{
         "data" => %{
           "type" => "User"
@@ -22,7 +24,7 @@ defmodule FreshcomWeb.UserControllerTest do
       assert length(response["errors"]) > 0
     end
 
-    test "with valid attributes", %{conn: conn} do
+    test "given valid attributes", %{conn: conn} do
       email = Faker.Internet.email()
       conn = post(conn, "/v1/users", %{
         "data" => %{
@@ -82,7 +84,58 @@ defmodule FreshcomWeb.UserControllerTest do
   end
 
   describe "(AddUser) POST /v1/users" do
+    test "given unauthorized requester", %{conn: conn} do
+      %{default_account_id: account_id} = standard_user()
+      user = managed_user(account_id)
+      uat = get_uat(account_id, user.id)
 
+      conn = put_req_header(conn, "authorization", "Bearer #{uat}")
+      conn = post(conn, "/v1/users", %{
+        "data" => %{
+          "type" => "User",
+          "attributes" => %{
+            "username" => Faker.Internet.user_name(),
+            "password" => "test1234",
+            "role" => "developer"
+          }
+        }
+      })
+
+      assert json_response(conn, 403)
+    end
+
+    test "given no attributes", %{conn: conn} do
+      user = standard_user()
+      uat = get_uat(user.default_account_id, user.id)
+
+      conn = put_req_header(conn, "authorization", "Bearer #{uat}")
+      conn = post(conn, "/v1/users", %{
+        "data" => %{
+          "type" => "User"
+        }
+      })
+
+      assert json_response(conn, 422)
+    end
+
+    test "given valid request", %{conn: conn} do
+      user = standard_user()
+      uat = get_uat(user.default_account_id, user.id)
+
+      conn = put_req_header(conn, "authorization", "Bearer #{uat}")
+      conn = post(conn, "/v1/users", %{
+        "data" => %{
+          "type" => "User",
+          "attributes" => %{
+            "username" => Faker.Internet.user_name(),
+            "password" => "test1234",
+            "role" => "developer"
+          }
+        }
+      })
+
+      assert response = json_response(conn, 201)
+    end
   end
 
   # # Retrieve current user

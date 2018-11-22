@@ -21,4 +21,11 @@ defmodule FreshcomWeb.UserController do
     |> Identity.register_user()
     |> send_response(conn, :create)
   end
+
+  def create(conn, %{"data" => %{"type" => "User"}}) do
+    conn
+    |> build_request(:create)
+    |> Identity.add_user()
+    |> send_response(conn, :create)
+  end
 end
