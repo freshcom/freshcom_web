@@ -28,4 +28,19 @@ defmodule FreshcomWeb.UserController do
     |> Identity.add_user()
     |> send_response(conn, :create)
   end
+
+  def show(conn, %{"id" => _}) do
+    conn
+    |> build_request(:show)
+    |> Identity.get_user()
+    |> send_response(conn, :show)
+  end
+
+  def show(%{assigns: assigns} = conn, _) do
+    conn
+    |> build_request(:show)
+    |> Request.put(:identifiers, "id", assigns[:requester_id])
+    |> Identity.get_user()
+    |> send_response(conn, :show)
+  end
 end

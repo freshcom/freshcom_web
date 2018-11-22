@@ -17,5 +17,6 @@ defmodule FreshcomWeb.Router do
     options "/*path", WelcomeController, :options
 
     resources "/users", UserController, only: [:index, :create, :show, :update, :delete]
+    get "/user", UserController, :show
   end
 end
