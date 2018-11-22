@@ -37,6 +37,17 @@ defmodule FreshcomWeb.Controller do
     }
   end
 
+  def build_request(%{assigns: assigns, params: params}, :update) do
+    %Request{
+      requester_id: assigns[:requester_id],
+      account_id: assigns[:account_id],
+      identifiers: Map.take(params, ["id"]),
+      fields: Params.to_attributes(params["data"]),
+      include: params["include"],
+      locale: params["locale"]
+    }
+  end
+
   def send_response({:ok, _}, conn, _, status: :no_content) do
     send_resp(conn, :no_content, "")
   end
@@ -54,6 +65,12 @@ defmodule FreshcomWeb.Controller do
   end
 
   def send_response({:ok, %{data: data, meta: meta}}, conn, :show) do
+    conn
+    |> put_status(:ok)
+    |> render("show.json-api", data: data, opts: [meta: camelize_keys(meta), include: conn.query_params["include"]])
+  end
+
+  def send_response({:ok, %{data: data, meta: meta}}, conn, :update) do
     conn
     |> put_status(:ok)
     |> render("show.json-api", data: data, opts: [meta: camelize_keys(meta), include: conn.query_params["include"]])

@@ -18,5 +18,6 @@ defmodule FreshcomWeb.Router do
 
     resources "/users", UserController, only: [:index, :create, :show, :update, :delete]
     get "/user", UserController, :show
+    patch "/user", UserController, :update
   end
 end

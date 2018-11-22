@@ -150,6 +150,87 @@ defmodule FreshcomWeb.UserControllerTest do
     end
   end
 
+  describe "(UpdateCurrentUser) PATCH /v1/user" do
+    test "given no access token", %{conn: conn} do
+      conn = patch(conn, "/v1/user", %{
+        "data" => %{
+          "type" => "User",
+          "attributes" => %{
+            "username" => Faker.Internet.user_name()
+          }
+        }
+      })
+
+      assert conn.status == 401
+    end
+
+    test "given uat", %{conn: conn} do
+      requester = standard_user()
+      uat = get_uat(requester.default_account_id, requester.id)
+
+      new_username = Faker.Internet.user_name()
+      conn = put_req_header(conn, "authorization", "Bearer #{uat}")
+      conn = patch(conn, "/v1/user", %{
+        "data" => %{
+          "type" => "User",
+          "attributes" => %{
+            "username" => new_username
+          }
+        }
+      })
+
+      assert response = json_response(conn, 200)
+      assert response["data"]["attributes"]["username"] == new_username
+    end
+  end
+
+  describe "(UpdateUser) PATCH /v1/users/:id" do
+    test "given no access token", %{conn: conn} do
+      conn = patch(conn, "/v1/users/#{uuid4()}")
+
+      assert conn.status == 401
+    end
+
+    test "given unauthorized uat", %{conn: conn} do
+      %{default_account_id: account_id} = standard_user()
+      requester = managed_user(account_id)
+      user = managed_user(account_id)
+      uat = get_uat(account_id, requester.id)
+
+      conn = put_req_header(conn, "authorization", "Bearer #{uat}")
+      conn = patch(conn, "/v1/users/#{user.id}", %{
+        "data" => %{
+          "type" => "User",
+          "attributes" => %{
+            "username" => Faker.Internet.user_name()
+          }
+        }
+      })
+
+      assert conn.status == 403
+    end
+
+    test "given valid uat", %{conn: conn} do
+      requester = standard_user()
+      user = managed_user(requester.default_account_id)
+      uat = get_uat(requester.default_account_id, requester.id)
+
+      new_username = Faker.Internet.user_name()
+      conn = put_req_header(conn, "authorization", "Bearer #{uat}")
+      conn = patch(conn, "/v1/users/#{user.id}", %{
+        "data" => %{
+          "type" => "User",
+          "attributes" => %{
+            "username" => new_username
+          }
+        }
+      })
+
+      assert response = json_response(conn, 200)
+      assert response["data"]["attributes"]["username"] == new_username
+    end
+  end
+
   # # Update current user
   # describe "PATCH /v1/user" do
   #   test "without UAT", %{conn: conn} do
