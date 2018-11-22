@@ -9,4 +9,12 @@ defmodule FreshcomWeb.Shortcut do
 
     uat
   end
+
+  def get_pat(account_id) do
+    prt = get_prt(account_id)
+
+    {:ok, %{access_token: pat}} = Authentication.create_access_token(%{refresh_token: prt.prefixed_id})
+
+    pat
+  end
 end
