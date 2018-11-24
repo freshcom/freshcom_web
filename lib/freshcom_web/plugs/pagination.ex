@@ -3,9 +3,7 @@ defmodule FreshcomWeb.PaginationPlug do
 
   @defaults %{number: 1, size: 25}
 
-  def init(_) do
-    []
-  end
+  def init(_), do: []
 
   def call(%{query_params: query_params} = conn, _) do
     assign(conn, :pagination, pagination(query_params["page"]))

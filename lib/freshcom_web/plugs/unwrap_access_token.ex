@@ -1,11 +1,11 @@
-defmodule FreshcomWeb.AuthenticationPlug do
+defmodule FreshcomWeb.UnwrapAccessTokenPlug do
   require Logger
   import Plug.Conn
   alias FreshcomWeb.JWT
 
-  def init(exception_paths), do: exception_paths
+  def init(_), do: []
 
-  def call(conn, exception_paths \\ []) do
+  def call(conn, _) do
     with [auth] <- get_req_header(conn, "authorization"),
          ["Bearer", access_token] <- String.split(auth),
          {:ok, access_token_payload} <- verify_access_token(access_token),
@@ -17,15 +17,10 @@ defmodule FreshcomWeb.AuthenticationPlug do
       |> assign(:requester_id, vas[:requester_id])
       |> assign(:account_id, vas[:account_id])
     else
-      true -> conn
       _ ->
-        if Enum.member?(exception_paths, conn.request_path) do
-          conn
-          |> assign(:requester_id, nil)
-          |> assign(:account_id, nil)
-        else
-          halt send_resp(conn, 401, "")
-        end
+        conn
+        |> assign(:requester_id, nil)
+        |> assign(:account_id, nil)
     end
   end
 

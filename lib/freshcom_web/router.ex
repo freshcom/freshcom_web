@@ -3,10 +3,15 @@ defmodule FreshcomWeb.Router do
 
   pipeline :plain do
     plug FreshcomWeb.CORSPlug
+    plug FreshcomWeb.UnwrapAccessTokenPlug
+  end
+
+  pipeline :authenticated do
+    plug FreshcomWeb.EnsureAuthenticatedPlug
   end
 
   pipeline :jsonapi do
-    plug FreshcomWeb.AuthenticationPlug, ["/v1/token", "/v1/users", "/v1/password_reset_tokens", "/v1/email_verifications", "/v1/password"]
+    plug :accepts, ["json-api"]
     plug FreshcomWeb.PaginationPlug
     plug JaSerializer.ContentTypeNegotiation
     plug JaSerializer.Deserializer
@@ -20,11 +25,17 @@ defmodule FreshcomWeb.Router do
   scope "/v1", FreshcomWeb do
     pipe_through [:plain, :jsonapi]
 
+    post "/users", UserController, :create
+  end
+
+  scope "/v1", FreshcomWeb do
+    pipe_through [:plain, :authenticated, :jsonapi]
+
     options "/*path", WelcomeController, :options
 
     get "/account", AccountController, :show
 
-    resources "/users", UserController, only: [:index, :create, :show, :update, :delete]
+    resources "/users", UserController, only: [:index, :show, :update, :delete]
     get "/user", UserController, :show
     patch "/user", UserController, :update
   end
