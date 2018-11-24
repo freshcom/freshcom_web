@@ -2,7 +2,7 @@ defmodule FreshcomWeb.UserController do
   use FreshcomWeb, :controller
   import FreshcomWeb.Controller
 
-  alias Freshcom.Identity
+  alias Freshcom.{Identity, Response}
 
   action_fallback FreshcomWeb.FallbackController
 
@@ -10,9 +10,15 @@ defmodule FreshcomWeb.UserController do
 
   # ListUser
   def index(conn, _) do
-    conn
-    |> build_request(:index)
-    |> Identity.list_user()
+    req = build_request(conn, :index)
+
+    {:ok, resp} = Identity.list_user(req)
+    {:ok, %{data: total_count}} = Identity.count_user(req)
+    {:ok, %{data: all_count}} = Identity.count_user(%{req | filter: [], search: nil})
+
+    resp
+    |> Response.put_meta(:total_count, total_count)
+    |> Response.put_meta(:all_count, all_count)
     |> send_response(conn, :index)
   end
 

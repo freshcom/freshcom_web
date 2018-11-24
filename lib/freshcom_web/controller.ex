@@ -4,7 +4,7 @@ defmodule FreshcomWeb.Controller do
   import FreshcomWeb.Normalization
 
   alias JaSerializer.Params
-  alias Freshcom.Request
+  alias Freshcom.{Request, Response}
 
   def build_request(%{assigns: assigns, params: params}, :index) do
     %Request{
@@ -52,7 +52,7 @@ defmodule FreshcomWeb.Controller do
     send_resp(conn, :no_content, "")
   end
 
-  def send_response({:ok, %{data: data, meta: meta}}, conn, :index) do
+  def send_response(%Response{data: data, meta: meta}, conn, :index) do
     conn
     |> put_status(:ok)
     |> render("index.json-api", data: data, opts: [meta: camelize_keys(meta), include: conn.query_params["include"]])

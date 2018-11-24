@@ -10,7 +10,8 @@ defmodule FreshcomWeb.UserView do
     :last_name,
     :name,
     :role,
-    :email_verified
+    :email_verified,
+    :updated_at
   ]
 
   def type do
