@@ -12,6 +12,41 @@ defmodule FreshcomWeb.UserControllerTest do
     %{conn: conn}
   end
 
+  describe "(ListUser) GET /v1/users" do
+    test "given no access token", %{conn: conn} do
+      conn = get(conn, "/v1/users")
+
+      assert conn.status == 401
+    end
+
+    test "given unauthorized uat", %{conn: conn} do
+      %{default_account_id: account_id} = standard_user()
+      requester = managed_user(account_id)
+      uat = get_uat(account_id, requester.id)
+
+      conn = put_req_header(conn, "authorization", "Bearer #{uat}")
+      conn = get(conn, "/v1/users")
+
+      assert conn.status == 403
+    end
+
+    test "given valid uat", %{conn: conn} do
+      requester = standard_user()
+      account_id = requester.default_account_id
+      managed_user(account_id)
+      managed_user(account_id)
+      uat = get_uat(account_id, requester.id)
+
+      conn = put_req_header(conn, "authorization", "Bearer #{uat}")
+      conn = get(conn, "/v1/users")
+
+      assert response = json_response(conn, 200)
+      assert length(response["data"]) == 2
+      assert response["meta"]["totalCount"] == 2
+      assert response["meta"]["allCount"] == 2
+    end
+  end
+
   describe "(RegisterUser) POST /v1/users" do
     test "given no attributes", %{conn: conn} do
       conn = post(conn, "/v1/users", %{
