@@ -1,4 +1,6 @@
 defmodule FreshcomWeb.Normalization do
+  import FCSupport.Normalization, only: [normalize_by: 5]
+
   def underscore(map, keys) when is_map(map) do
     Enum.reduce(map, map, fn({k, v}, acc) ->
       if Enum.member?(keys, k) && acc[k] do
@@ -14,21 +16,7 @@ defmodule FreshcomWeb.Normalization do
   end
 
   def underscore(map, root_key, key) when is_map(map) do
-    value =
-      map
-      |> Map.get(root_key)
-      |> Map.get(key)
-
-    if is_binary(value) do
-      root_value =
-        map
-        |> Map.get(root_key)
-        |> Map.put(key, underscore(value))
-
-      Map.put(map, root_key, root_value)
-    else
-      map
-    end
+    normalize_by(map, root_key, key, &is_binary/1, &underscore/1)
   end
 
   def camelize(str) do
