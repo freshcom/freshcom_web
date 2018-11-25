@@ -92,7 +92,7 @@ defmodule FreshcomWeb.UserControllerTest do
           "attributes" => %{
             "username" => Faker.Internet.user_name(),
             "password" => "test1234",
-            "role" => "developer"
+            "role" => "supportSpecialist"
           }
         }
       })
@@ -125,7 +125,7 @@ defmodule FreshcomWeb.UserControllerTest do
           "attributes" => %{
             "username" => Faker.Internet.user_name(),
             "password" => "test1234",
-            "role" => "developer"
+            "role" => "supportSpecialist"
           }
         }
       })
@@ -284,7 +284,7 @@ defmodule FreshcomWeb.UserControllerTest do
         "data" => %{
           "type" => "Role",
           "attributes" => %{
-            "value" => "manager"
+            "value" => "supportSpecialist"
           }
         }
       })
@@ -302,13 +302,13 @@ defmodule FreshcomWeb.UserControllerTest do
         "data" => %{
           "type" => "Role",
           "attributes" => %{
-            "value" => "manager"
+            "value" => "supportSpecialist"
           }
         }
       })
 
       assert response = json_response(conn, 200)
-      assert response["data"]["attributes"]["role"] == "manager"
+      assert response["data"]["attributes"]["role"] == "supportSpecialist"
     end
   end
 

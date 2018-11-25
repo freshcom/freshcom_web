@@ -17,4 +17,8 @@ defmodule FreshcomWeb.UserView do
   def type do
     "User"
   end
+
+  def role(user) do
+    camelize(user.role)
+  end
 end

@@ -1,6 +1,7 @@
 defmodule FreshcomWeb.UserController do
   use FreshcomWeb, :controller
   import FreshcomWeb.Controller
+  import FreshcomWeb.Normalization, only: [underscore: 3]
 
   alias Freshcom.{Identity, Response}
 
@@ -39,6 +40,7 @@ defmodule FreshcomWeb.UserController do
   def create(conn, %{"data" => %{"type" => "User"}}) do
     conn
     |> build_request(:create)
+    |> underscore(:fields, "role")
     |> Identity.add_user()
     |> send_response(conn, :create)
   end
@@ -81,6 +83,7 @@ defmodule FreshcomWeb.UserController do
   def update_role(conn, _) do
     conn
     |> build_request(:update)
+    |> underscore(:fields, "value")
     |> Identity.change_user_role()
     |> send_response(conn, :show)
   end

@@ -39,6 +39,7 @@ defmodule FreshcomWeb do
       import FreshcomWeb.Router.Helpers
       import FreshcomWeb.ErrorHelpers
       import FreshcomWeb.Gettext
+      import FreshcomWeb.Normalization, only: [camelize: 1]
     end
   end
 
