@@ -76,4 +76,12 @@ defmodule FreshcomWeb.UserController do
     |> Identity.update_user_info()
     |> send_response(conn, :show)
   end
+
+  # ChangeUserRole
+  def update_role(conn, _) do
+    conn
+    |> build_request(:update)
+    |> Identity.change_user_role()
+    |> send_response(conn, :show)
+  end
 end

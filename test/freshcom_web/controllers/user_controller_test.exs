@@ -266,6 +266,52 @@ defmodule FreshcomWeb.UserControllerTest do
     end
   end
 
+  describe "(ChangeUserRole) PATH /v1/users/:id/role" do
+    test "given no access token", %{conn: conn} do
+      conn = patch(conn, "/v1/users/#{uuid4()}/role")
+
+      assert conn.status == 401
+    end
+
+    test "given unauthorized uat", %{conn: conn} do
+      %{default_account_id: account_id} = standard_user()
+      requester = managed_user(account_id)
+      user = managed_user(account_id)
+      uat = get_uat(account_id, requester.id)
+
+      conn = put_req_header(conn, "authorization", "Bearer #{uat}")
+      conn = patch(conn, "/v1/users/#{user.id}/role", %{
+        "data" => %{
+          "type" => "Role",
+          "attributes" => %{
+            "value" => "manager"
+          }
+        }
+      })
+
+      assert conn.status == 403
+    end
+
+    test "given valid uat", %{conn: conn} do
+      requester = standard_user()
+      user = managed_user(requester.default_account_id)
+      uat = get_uat(requester.default_account_id, requester.id)
+
+      conn = put_req_header(conn, "authorization", "Bearer #{uat}")
+      conn = patch(conn, "/v1/users/#{user.id}/role", %{
+        "data" => %{
+          "type" => "Role",
+          "attributes" => %{
+            "value" => "manager"
+          }
+        }
+      })
+
+      assert response = json_response(conn, 200)
+      assert response["data"]["attributes"]["role"] == "manager"
+    end
+  end
+
   # # Delete a managed user
   # describe "DELETE /v1/users/:id" do
   #   test "without UAT", %{conn: conn} do
