@@ -83,7 +83,7 @@ defmodule FreshcomWeb.UserController do
   end
 
   # ChangeUserRole
-  def update_role(conn, _) do
+  def change_role(conn, _) do
     conn
     |> build_request(:update)
     |> normalize_request(:fields, "value", &underscore/1)
