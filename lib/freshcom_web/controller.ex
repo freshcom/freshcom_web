@@ -2,6 +2,7 @@ defmodule FreshcomWeb.Controller do
   import Plug.Conn, only: [put_status: 2, send_resp: 3]
   import Phoenix.Controller, only: [render: 3]
   import FreshcomWeb.Normalization
+  import FCSupport.Normalization, only: [normalize_by: 5]
 
   alias JaSerializer.Params
   alias Freshcom.{Request, Response}
@@ -46,6 +47,10 @@ defmodule FreshcomWeb.Controller do
       include: params["include"],
       locale: params["locale"]
     }
+  end
+
+  def normalize_request(request, :fields, key, func) do
+    normalize_by(request, :fields, key, &is_binary/1, func)
   end
 
   def send_response({:ok, _}, conn, _, status: :no_content) do
