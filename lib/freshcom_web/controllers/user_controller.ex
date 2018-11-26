@@ -11,7 +11,10 @@ defmodule FreshcomWeb.UserController do
 
   # ListUser
   def index(conn, _) do
-    req = build_request(conn, :index)
+    req =
+      conn
+      |> build_request(:index)
+      |> normalize_request(:filter, "role", &underscore/1)
 
     case Identity.list_user(req) do
       {:ok, resp} ->
