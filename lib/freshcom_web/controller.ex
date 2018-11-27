@@ -23,7 +23,7 @@ defmodule FreshcomWeb.Controller do
     %Request{
       requester_id: assigns[:requester_id],
       account_id: assigns[:account_id],
-      fields: Params.to_attributes(params["data"]),
+      fields: Params.to_attributes(params["data"] || %{}),
       include: params["include"]
     }
   end
@@ -38,12 +38,12 @@ defmodule FreshcomWeb.Controller do
     }
   end
 
-  def build_request(%{assigns: assigns, params: params}, :update) do
+  def build_request(%{assigns: assigns, params: params}, :update, opts \\ []) do
     %Request{
       requester_id: assigns[:requester_id],
       account_id: assigns[:account_id],
-      identifiers: Map.take(params, ["id"]),
-      fields: Params.to_attributes(params["data"]),
+      identifiers: Map.take(params, opts[:identifiers] || ["id"]),
+      fields: Params.to_attributes(params["data"] || %{}),
       include: params["include"],
       locale: params["locale"]
     }
