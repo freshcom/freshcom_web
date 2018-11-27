@@ -27,14 +27,14 @@ defmodule FreshcomWeb.Normalization do
     Enum.reduce(errors, [], fn(error, acc) ->
       case error do
         {:error, key, {reason, meta}} ->
-          acc ++ [%{code: reason, source: error_source(key), meta: Enum.into(meta, %{})}]
+          acc ++ [%{code: camelize(reason), source: error_source(key), meta: Enum.into(meta, %{})}]
         {:error, key, reason} ->
-          acc ++ [%{code: reason, source: error_source(key), meta: %{}}]
+          acc ++ [%{code: camelize(reason), source: error_source(key), meta: %{}}]
       end
     end)
   end
 
   defp error_source(key) do
-    %{pointer: "/data/attributes/#{key}"}
+    %{pointer: "/data/attributes/#{camelize(key)}"}
   end
 end
