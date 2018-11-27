@@ -66,18 +66,9 @@ defmodule FreshcomWeb.UserController do
   end
 
   # UpdateUser
-  def update(conn, %{"id" => _}) do
+  def update(conn, _) do
     conn
     |> build_request(:update)
-    |> Identity.update_user_info()
-    |> send_response(conn, :show)
-  end
-
-  # UpdateCurrentUser
-  def update(%{assigns: assigns} = conn, _) do
-    conn
-    |> build_request(:update)
-    |> Request.put(:identifiers, "id", assigns[:requester_id])
     |> Identity.update_user_info()
     |> send_response(conn, :show)
   end

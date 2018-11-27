@@ -185,40 +185,6 @@ defmodule FreshcomWeb.UserControllerTest do
     end
   end
 
-  describe "(UpdateCurrentUser) PATCH /v1/user" do
-    test "given no access token", %{conn: conn} do
-      conn = patch(conn, "/v1/user", %{
-        "data" => %{
-          "type" => "User",
-          "attributes" => %{
-            "username" => Faker.Internet.user_name()
-          }
-        }
-      })
-
-      assert conn.status == 401
-    end
-
-    test "given uat", %{conn: conn} do
-      requester = standard_user()
-      uat = get_uat(requester.default_account_id, requester.id)
-
-      new_username = Faker.Internet.user_name()
-      conn = put_req_header(conn, "authorization", "Bearer #{uat}")
-      conn = patch(conn, "/v1/user", %{
-        "data" => %{
-          "type" => "User",
-          "attributes" => %{
-            "username" => new_username
-          }
-        }
-      })
-
-      assert response = json_response(conn, 200)
-      assert response["data"]["attributes"]["username"] == new_username
-    end
-  end
-
   describe "(UpdateUser) PATCH /v1/users/:id" do
     test "given no access token", %{conn: conn} do
       conn = patch(conn, "/v1/users/#{uuid4()}")
@@ -266,9 +232,9 @@ defmodule FreshcomWeb.UserControllerTest do
     end
   end
 
-  describe "(ChangeUserRole) PATCH /v1/users/:id/role" do
+  describe "(ChangeUserRole) PUT /v1/users/:id/role" do
     test "given no access token", %{conn: conn} do
-      conn = patch(conn, "/v1/users/#{uuid4()}/role")
+      conn = put(conn, "/v1/users/#{uuid4()}/role")
 
       assert conn.status == 401
     end
@@ -280,7 +246,7 @@ defmodule FreshcomWeb.UserControllerTest do
       uat = get_uat(account_id, requester.id)
 
       conn = put_req_header(conn, "authorization", "Bearer #{uat}")
-      conn = patch(conn, "/v1/users/#{user.id}/role", %{
+      conn = put(conn, "/v1/users/#{user.id}/role", %{
         "data" => %{
           "type" => "Role",
           "attributes" => %{
@@ -298,7 +264,7 @@ defmodule FreshcomWeb.UserControllerTest do
       uat = get_uat(requester.default_account_id, requester.id)
 
       conn = put_req_header(conn, "authorization", "Bearer #{uat}")
-      conn = patch(conn, "/v1/users/#{user.id}/role", %{
+      conn = put(conn, "/v1/users/#{user.id}/role", %{
         "data" => %{
           "type" => "Role",
           "attributes" => %{
@@ -312,9 +278,9 @@ defmodule FreshcomWeb.UserControllerTest do
     end
   end
 
-  describe "(ChangePassword) PATCH /v1/password" do
+  describe "(ChangePassword) PUT /v1/password" do
     test "given no access token", %{conn: conn} do
-      conn = patch(conn, "/v1/password", %{})
+      conn = put(conn, "/v1/password", %{})
 
       assert response = json_response(conn, 422)
     end
@@ -326,7 +292,7 @@ defmodule FreshcomWeb.UserControllerTest do
       uat = get_uat(account_id, requester.id)
 
       conn = put_req_header(conn, "authorization", "Bearer #{uat}")
-      conn = patch(conn, "/v1/password?id=#{user.id}", %{
+      conn = put(conn, "/v1/password?id=#{user.id}", %{
         "data" => %{
           "type" => "Password",
           "attributes" => %{
@@ -344,7 +310,7 @@ defmodule FreshcomWeb.UserControllerTest do
       uat = get_uat(requester.default_account_id, requester.id)
 
       conn = put_req_header(conn, "authorization", "Bearer #{uat}")
-      conn = patch(conn, "/v1/password?id=#{user.id}", %{
+      conn = put(conn, "/v1/password?id=#{user.id}", %{
         "data" => %{
           "type" => "Password",
           "attributes" => %{
