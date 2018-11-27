@@ -26,6 +26,7 @@ defmodule FreshcomWeb.Router do
     pipe_through [:plain, :jsonapi]
 
     post "/users", UserController, :create
+    patch "/password", UserController, :change_password
   end
 
   scope "/v1", FreshcomWeb do

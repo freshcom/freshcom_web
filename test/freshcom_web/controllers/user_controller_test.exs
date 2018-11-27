@@ -266,7 +266,7 @@ defmodule FreshcomWeb.UserControllerTest do
     end
   end
 
-  describe "(ChangeUserRole) PATH /v1/users/:id/role" do
+  describe "(ChangeUserRole) PATCH /v1/users/:id/role" do
     test "given no access token", %{conn: conn} do
       conn = patch(conn, "/v1/users/#{uuid4()}/role")
 
@@ -309,6 +309,51 @@ defmodule FreshcomWeb.UserControllerTest do
 
       assert response = json_response(conn, 200)
       assert response["data"]["attributes"]["role"] == "supportSpecialist"
+    end
+  end
+
+  describe "(ChangePassword) PATCH /v1/password" do
+    test "given no access token", %{conn: conn} do
+      conn = patch(conn, "/v1/password", %{})
+
+      assert response = json_response(conn, 422)
+    end
+
+    test "given unauthorized uat", %{conn: conn} do
+      %{default_account_id: account_id} = standard_user()
+      requester = managed_user(account_id)
+      user = managed_user(account_id)
+      uat = get_uat(account_id, requester.id)
+
+      conn = put_req_header(conn, "authorization", "Bearer #{uat}")
+      conn = patch(conn, "/v1/password?id=#{user.id}", %{
+        "data" => %{
+          "type" => "Password",
+          "attributes" => %{
+            "newPassword" => "test1234"
+          }
+        }
+      })
+
+      assert conn.status == 403
+    end
+
+    test "given valid uat", %{conn: conn} do
+      requester = standard_user()
+      user = managed_user(requester.default_account_id)
+      uat = get_uat(requester.default_account_id, requester.id)
+
+      conn = put_req_header(conn, "authorization", "Bearer #{uat}")
+      conn = patch(conn, "/v1/password?id=#{user.id}", %{
+        "data" => %{
+          "type" => "Password",
+          "attributes" => %{
+            "newPassword" => "test1234"
+          }
+        }
+      })
+
+      assert response = json_response(conn, 200)
     end
   end
 

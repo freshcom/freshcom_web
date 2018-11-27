@@ -90,4 +90,12 @@ defmodule FreshcomWeb.UserController do
     |> Identity.change_user_role()
     |> send_response(conn, :show)
   end
+
+  # ChangePassword
+  def change_password(conn, _) do
+    conn
+    |> build_request(:update, identifiers: ["id", "reset_token"])
+    |> Identity.change_password()
+    |> send_response(conn, :show)
+  end
 end
