@@ -323,6 +323,37 @@ defmodule FreshcomWeb.UserControllerTest do
     end
   end
 
+  describe "(DeleteUser) DELETE /v1/users/:id" do
+    test "given no access token", %{conn: conn} do
+      conn = delete(conn, "/v1/users/#{uuid4()}")
+
+      assert conn.status == 401
+    end
+
+    test "given unauthorized uat", %{conn: conn} do
+      %{default_account_id: account_id} = standard_user()
+      requester = managed_user(account_id)
+      user = managed_user(account_id)
+      uat = get_uat(account_id, requester.id)
+
+      conn = put_req_header(conn, "authorization", "Bearer #{uat}")
+      conn = delete(conn, "/v1/users/#{user.id}")
+
+      assert conn.status == 403
+    end
+
+    test "given valid uat", %{conn: conn} do
+      requester = standard_user()
+      user = managed_user(requester.default_account_id)
+      uat = get_uat(requester.default_account_id, requester.id)
+
+      conn = put_req_header(conn, "authorization", "Bearer #{uat}")
+      conn = delete(conn, "/v1/users/#{user.id}")
+
+      assert conn.status == 204
+    end
+  end
+
   # # Delete a managed user
   # describe "DELETE /v1/users/:id" do
   #   test "without UAT", %{conn: conn} do

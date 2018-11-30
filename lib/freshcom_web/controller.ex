@@ -7,7 +7,9 @@ defmodule FreshcomWeb.Controller do
   alias JaSerializer.Params
   alias Freshcom.{Request, Response, Filter}
 
-  def build_request(%{assigns: assigns, params: params}, :index) do
+  def build_request(conn, action, opts \\ [])
+
+  def build_request(%{assigns: assigns, params: params}, :index, _) do
     %Request{
       requester_id: assigns[:requester_id],
       account_id: assigns[:account_id],
@@ -19,7 +21,7 @@ defmodule FreshcomWeb.Controller do
     }
   end
 
-  def build_request(%{assigns: assigns, params: params}, :create) do
+  def build_request(%{assigns: assigns, params: params}, :create, _) do
     %Request{
       requester_id: assigns[:requester_id],
       account_id: assigns[:account_id],
@@ -28,7 +30,7 @@ defmodule FreshcomWeb.Controller do
     }
   end
 
-  def build_request(%{assigns: assigns, params: params}, :show) do
+  def build_request(%{assigns: assigns, params: params}, :show, _) do
     %Request{
       requester_id: assigns[:requester_id],
       account_id: assigns[:account_id],
@@ -38,7 +40,7 @@ defmodule FreshcomWeb.Controller do
     }
   end
 
-  def build_request(%{assigns: assigns, params: params}, :update, opts \\ []) do
+  def build_request(%{assigns: assigns, params: params}, :update, opts) do
     %Request{
       requester_id: assigns[:requester_id],
       account_id: assigns[:account_id],
@@ -46,6 +48,14 @@ defmodule FreshcomWeb.Controller do
       fields: Params.to_attributes(params["data"] || %{}),
       include: params["include"],
       locale: params["locale"]
+    }
+  end
+
+  def build_request(%{assigns: assigns, params: params}, :delete, opts) do
+    %Request{
+      requester_id: assigns[:requester_id],
+      account_id: assigns[:account_id],
+      identifiers: Map.take(params, opts[:identifiers] || ["id"])
     }
   end
 
@@ -92,4 +102,5 @@ defmodule FreshcomWeb.Controller do
   end
 
   def send_response(other, _, _), do: other
+  def send_response(other, _, _, _), do: other
 end

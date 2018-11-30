@@ -89,4 +89,12 @@ defmodule FreshcomWeb.UserController do
     |> Identity.change_password()
     |> send_response(conn, :show)
   end
+
+  # DeleteUser
+  def delete(conn, _) do
+    conn
+    |> build_request(:delete, identifiers: ["id"])
+    |> Identity.delete_user()
+    |> send_response(conn, :delete, status: :no_content)
+  end
 end
