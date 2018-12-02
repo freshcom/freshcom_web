@@ -4,6 +4,7 @@ defmodule FreshcomWeb.AccountView do
 
   attributes [
     :name,
+    :handle,
     :mode,
     :legal_name,
     :website_url,
