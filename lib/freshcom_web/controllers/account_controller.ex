@@ -15,4 +15,12 @@ defmodule FreshcomWeb.AccountController do
     |> Identity.get_account()
     |> send_response(conn, :show)
   end
+
+  # UpdateCurrentAccount
+  def update(conn, _) do
+    conn
+    |> build_request(:update)
+    |> Identity.update_account_info()
+    |> send_response(conn, :show)
+  end
 end

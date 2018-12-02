@@ -35,6 +35,7 @@ defmodule FreshcomWeb.Router do
     options "/*path", WelcomeController, :options
 
     get "/account", AccountController, :show
+    patch "/account", AccountController, :update
 
     resources "/users", UserController, only: [:index, :show, :update, :delete]
     get "/user", UserController, :show
