@@ -3,6 +3,7 @@ defmodule FreshcomWeb.AuthenticationTest do
 
   import Freshcom.{Fixture, Shortcut}
 
+  alias Freshcom.Identity
   alias FreshcomWeb.Authentication
 
   test "create_access_token/1 given invalid refresh token" do
@@ -40,7 +41,7 @@ defmodule FreshcomWeb.AuthenticationTest do
       input = %{
         "grant_type" => "refresh_token",
         "refresh_token" => urt_live.prefixed_id,
-        "scope" => "aid:#{test_account_id}"
+        "scope" => "a:#{test_account_id}"
       }
 
       assert {:ok, result} = Authentication.create_access_token(input)
@@ -82,7 +83,7 @@ defmodule FreshcomWeb.AuthenticationTest do
         "grant_type" => "password",
         "username" => "invalid",
         "password" => "invalid",
-        "scope" => "aid:#{uuid4()}"
+        "scope" => "a:#{uuid4()}"
       }
 
       assert {:error, %{error: :invalid_grant}} = Authentication.create_access_token(input)
@@ -112,7 +113,7 @@ defmodule FreshcomWeb.AuthenticationTest do
         "grant_type" => "password",
         "username" => user.username,
         "password" => "test1234",
-        "scope" => "aid:#{user.default_account_id}"
+        "scope" => "a:#{user.default_account_id}"
       }
 
       assert {:error, %{error: :invalid_grant}} = Authentication.create_access_token(input)
@@ -142,7 +143,7 @@ defmodule FreshcomWeb.AuthenticationTest do
         "grant_type" => "password",
         "username" => user.username,
         "password" => "test1234",
-        "scope" => "aid:#{other_account_id}"
+        "scope" => "a:#{other_account_id}"
       }
 
       assert {:error, %{error: :invalid_grant}} = Authentication.create_access_token(input)
@@ -157,7 +158,33 @@ defmodule FreshcomWeb.AuthenticationTest do
         "grant_type" => "password",
         "username" => user.username,
         "password" => "test1234",
-        "scope" => "aid:#{account_id}"
+        "scope" => "a:#{account_id}"
+      }
+
+      assert {:ok, result} = Authentication.create_access_token(input)
+      assert result.expires_in
+      assert result.access_token
+      assert result.refresh_token == urt.prefixed_id
+      assert result.token_type
+    end
+
+    @tag :focus
+    test "and valid scope using account handle" do
+      %{default_account_id: account_id} = standard_user()
+      user = managed_user(account_id)
+      urt = get_urt(account_id, user.id)
+
+      Identity.update_account_info(%Request{
+        _role_: "system",
+        account_id: account_id,
+        fields: %{"handle" => "test"}
+      })
+
+      input = %{
+        "grant_type" => "password",
+        "username" => user.username,
+        "password" => "test1234",
+        "scope" => "a:test"
       }
 
       assert {:ok, result} = Authentication.create_access_token(input)

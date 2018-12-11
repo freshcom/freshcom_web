@@ -14,7 +14,6 @@ defmodule FreshcomWeb.Authentication do
     invalid_request: {:error, %{error: :invalid_request, error_description: "Your request is missing required parameters or is otherwise malformed."}}
   ]
 
-
   # Publishable Refresh Token
   # %{ user_id: nil, account_id: "test-test-test-test" }
 
@@ -43,7 +42,7 @@ defmodule FreshcomWeb.Authentication do
   end
 
   def create_access_token(%{"grant_type" => "password", "scope" => scope} = fields) do
-    scope = deserialize_scope(scope, %{aid: :account_id})
+    scope = deserialize_scope(scope, %{a: :account})
 
     fields
     |> atomize_keys([:grant_type, :username, :password])
@@ -58,7 +57,7 @@ defmodule FreshcomWeb.Authentication do
   end
 
   def create_access_token(%{"grant_type" => "refresh_token", "scope" => scope} = fields) do
-    scope = deserialize_scope(scope, %{aid: :account_id})
+    scope = deserialize_scope(scope, %{a: :account})
 
     fields
     |> atomize_keys([:grant_type, :refresh_token])
@@ -72,7 +71,7 @@ defmodule FreshcomWeb.Authentication do
 
   def create_access_token(%{refresh_token: rt_id, scope: scope}) do
     rt_id
-    |> exchange_refresh_token(scope[:account_id])
+    |> exchange_refresh_token(account_id(scope[:account]))
     |> normalize_error(@errors[:invalid_refresh_token_grant])
     ~> to_access_token()
   end
@@ -85,9 +84,9 @@ defmodule FreshcomWeb.Authentication do
   end
 
   def create_access_token(%{username: username, password: password, scope: scope}) do
-    get_user(username, password, scope[:account_id])
+    get_user(username, password, account_id(scope[:account]))
     |> normalize_error(@errors[:invalid_password_grant])
-    ~>> get_refresh_token(scope[:account_id])
+    ~>> get_refresh_token(account_id(scope[:account]))
     ~> to_access_token()
   end
 
@@ -210,4 +209,26 @@ defmodule FreshcomWeb.Authentication do
 
   defp normalize_error({:error, _}, error_result), do: error_result
   defp normalize_error(other, _), do: other
+
+  defp account_id(account_id_or_handle) do
+    case UUID.info(account_id_or_handle) do
+      {:ok, _} ->
+        account_id_or_handle
+
+      {:error, _} ->
+        account_handle_to_id(account_id_or_handle)
+    end
+  end
+
+  defp account_handle_to_id(handle) do
+    request = %Request{
+      _role_: "system",
+      identifiers: %{"handle" => handle}
+    }
+
+    case Identity.get_account(request) do
+      {:ok, %{data: account}} -> account.id
+      {:error, _} -> UUID.uuid4()
+    end
+  end
 end

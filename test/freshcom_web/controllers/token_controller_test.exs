@@ -55,7 +55,7 @@ defmodule FreshcomWeb.TokenControllerTest do
         "grant_type" => "password",
         "username" => user.username,
         "password" => "test1234",
-        "scope" => "aid:#{account_id}"
+        "scope" => "a:#{account_id}"
       })
 
       assert response = json_response(conn, 200)
