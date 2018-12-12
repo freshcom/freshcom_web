@@ -42,7 +42,7 @@ defmodule FreshcomWeb.Authentication do
   end
 
   def create_access_token(%{"grant_type" => "password", "scope" => scope} = fields) do
-    scope = deserialize_scope(scope, %{a: :account})
+    scope = deserialize_scope(scope, %{acc: :account})
 
     fields
     |> atomize_keys([:grant_type, :username, :password])
@@ -57,7 +57,7 @@ defmodule FreshcomWeb.Authentication do
   end
 
   def create_access_token(%{"grant_type" => "refresh_token", "scope" => scope} = fields) do
-    scope = deserialize_scope(scope, %{a: :account})
+    scope = deserialize_scope(scope, %{acc: :account})
 
     fields
     |> atomize_keys([:grant_type, :refresh_token])
