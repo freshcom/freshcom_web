@@ -3,6 +3,8 @@ defmodule FreshcomWeb.UserControllerTest do
   import Freshcom.Fixture
   import FreshcomWeb.Shortcut
 
+  alias Freshcom.App
+
   setup do
     conn =
       build_conn()
@@ -65,7 +67,7 @@ defmodule FreshcomWeb.UserControllerTest do
       client = system_app()
       email = Faker.Internet.email()
 
-      conn = put_req_header(conn, "authorization", "Bearer cid-#{client.id}")
+      conn = put_req_header(conn, "authorization", "Bearer #{App.prefixed_id(client)}")
       conn = post(conn, "/v1/users", %{
         "data" => %{
           "type" => "User",

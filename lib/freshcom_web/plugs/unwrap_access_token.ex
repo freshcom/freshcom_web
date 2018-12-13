@@ -26,7 +26,7 @@ defmodule FreshcomWeb.UnwrapAccessTokenPlug do
     end
   end
 
-  def verify_access_token("cid-" <> cid) do
+  def verify_access_token("app-" <> cid) do
     {:ok, %{"cid" => cid}}
   end
 
