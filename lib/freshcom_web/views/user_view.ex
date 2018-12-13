@@ -4,6 +4,7 @@ defmodule FreshcomWeb.UserView do
 
   attributes [
     :status,
+    :type,
     :email,
     :username,
     :first_name,
