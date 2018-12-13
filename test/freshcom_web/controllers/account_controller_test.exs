@@ -21,7 +21,8 @@ defmodule FreshcomWeb.AccountControllerTest do
 
     test "given pat", %{conn: conn} do
       requester = standard_user()
-      pat = get_pat(requester.default_account_id)
+      client = standard_app(requester.default_account_id)
+      pat = get_pat(requester.default_account_id, client.id)
 
       conn = put_req_header(conn, "authorization", "Bearer #{pat}")
       conn = get(conn, "/v1/account")
@@ -41,7 +42,8 @@ defmodule FreshcomWeb.AccountControllerTest do
     test "given unauthorized uat", %{conn: conn} do
       %{default_account_id: account_id} = standard_user()
       requester = managed_user(account_id)
-      uat = get_uat(account_id, requester.id)
+      client = standard_app(account_id)
+      uat = get_uat(account_id, requester.id, client.id)
 
       conn = put_req_header(conn, "authorization", "Bearer #{uat}")
       conn = patch(conn, "/v1/account", %{
@@ -58,7 +60,8 @@ defmodule FreshcomWeb.AccountControllerTest do
 
     test "given valid uat", %{conn: conn} do
       requester = standard_user()
-      uat = get_uat(requester.default_account_id, requester.id)
+      client = standard_app(requester.default_account_id)
+      uat = get_uat(requester.default_account_id, requester.id, client.id)
 
       new_name = Faker.Company.name()
       conn = put_req_header(conn, "authorization", "Bearer #{uat}")

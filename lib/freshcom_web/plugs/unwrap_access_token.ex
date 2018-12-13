@@ -26,6 +26,10 @@ defmodule FreshcomWeb.UnwrapAccessTokenPlug do
     end
   end
 
+  def verify_access_token("cid-" <> cid) do
+    {:ok, %{"cid" => cid}}
+  end
+
   def verify_access_token(access_token) do
     with {true, %{"cid" => _, "aid" => _, "exp" => exp} = fields} <- JWT.verify_token(access_token),
          true <- exp >= System.system_time(:second)
@@ -40,7 +44,12 @@ defmodule FreshcomWeb.UnwrapAccessTokenPlug do
   def extract_vas(%{"rid" => rid, "aid" => aid, "cid" => cid, "typ" => "user"}) do
     {:ok, %{requester_id: rid, account_id: aid, client_id: cid}}
   end
+
   def extract_vas(%{"aid" => aid, "cid" => cid, "typ" => "publishable"}) do
     {:ok, %{requester_id: nil, account_id: aid, client_id: cid}}
+  end
+
+  def extract_vas(%{"cid" => cid}) do
+    {:ok, %{client_id: cid}}
   end
 end

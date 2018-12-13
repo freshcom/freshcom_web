@@ -12,6 +12,7 @@ defmodule FreshcomWeb.Controller do
   def build_request(%{assigns: assigns, params: params}, :index, _) do
     %Request{
       requester_id: assigns[:requester_id],
+      client_id: assigns[:client_id],
       account_id: assigns[:account_id],
       search: params["search"],
       filter: params["filter"] || [],
@@ -24,6 +25,7 @@ defmodule FreshcomWeb.Controller do
   def build_request(%{assigns: assigns, params: params}, :create, _) do
     %Request{
       requester_id: assigns[:requester_id],
+      client_id: assigns[:client_id],
       account_id: assigns[:account_id],
       fields: Params.to_attributes(params["data"] || %{}),
       include: params["include"]
@@ -33,6 +35,7 @@ defmodule FreshcomWeb.Controller do
   def build_request(%{assigns: assigns, params: params}, :show, _) do
     %Request{
       requester_id: assigns[:requester_id],
+      client_id: assigns[:client_id],
       account_id: assigns[:account_id],
       identifiers: Map.take(params, ["id"]),
       include: params["include"],
@@ -43,6 +46,7 @@ defmodule FreshcomWeb.Controller do
   def build_request(%{assigns: assigns, params: params}, :update, opts) do
     %Request{
       requester_id: assigns[:requester_id],
+      client_id: assigns[:client_id],
       account_id: assigns[:account_id],
       identifiers: Map.take(params, opts[:identifiers] || ["id"]),
       fields: Params.to_attributes(params["data"] || %{}),
@@ -54,6 +58,7 @@ defmodule FreshcomWeb.Controller do
   def build_request(%{assigns: assigns, params: params}, :delete, opts) do
     %Request{
       requester_id: assigns[:requester_id],
+      client_id: assigns[:client_id],
       account_id: assigns[:account_id],
       identifiers: Map.take(params, opts[:identifiers] || ["id"])
     }
