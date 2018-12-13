@@ -18,9 +18,12 @@ defmodule FreshcomWeb.AuthenticationTest do
   describe "create_access_token/1 given live urt" do
     test "and no scope" do
       user = standard_user()
+      client = standard_app(user.default_account_id)
       urt = get_urt(user.default_account_id, user.id)
+
       input = %{
         "grant_type" => "refresh_token",
+        "client_id" => client.id,
         "refresh_token" => urt.prefixed_id
       }
 
@@ -33,6 +36,7 @@ defmodule FreshcomWeb.AuthenticationTest do
 
     test "and scope on test account" do
       user = standard_user(include: "default_account")
+      client = system_app()
       live_account_id = user.default_account_id
       test_account_id = user.default_account.test_account_id
       urt_live = get_urt(live_account_id, user.id)
@@ -41,7 +45,8 @@ defmodule FreshcomWeb.AuthenticationTest do
       input = %{
         "grant_type" => "refresh_token",
         "refresh_token" => urt_live.prefixed_id,
-        "scope" => "a:#{test_account_id}"
+        "client_id" => client.id,
+        "scope" => "acc:#{test_account_id}"
       }
 
       assert {:ok, result} = Authentication.create_access_token(input)
@@ -54,9 +59,11 @@ defmodule FreshcomWeb.AuthenticationTest do
 
   test "create_access_token/1 given live prt and no scope" do
     user = standard_user()
+    client = standard_app(user.default_account_id)
     prt = get_prt(user.default_account_id)
     input = %{
       "grant_type" => "refresh_token",
+      "client_id" => client.id,
       "refresh_token" => prt.prefixed_id
     }
 
@@ -71,6 +78,7 @@ defmodule FreshcomWeb.AuthenticationTest do
     test "and no scope" do
       input = %{
         "grant_type" => "password",
+        "client_id" => uuid4(),
         "username" => "invalid",
         "password" => "invalid"
       }
@@ -81,9 +89,10 @@ defmodule FreshcomWeb.AuthenticationTest do
     test "and scope" do
       input = %{
         "grant_type" => "password",
+        "client_id" => uuid4(),
         "username" => "invalid",
         "password" => "invalid",
-        "scope" => "a:#{uuid4()}"
+        "scope" => "acc:#{uuid4()}"
       }
 
       assert {:error, %{error: :invalid_grant}} = Authentication.create_access_token(input)
@@ -93,9 +102,11 @@ defmodule FreshcomWeb.AuthenticationTest do
   describe "create_access_token/1 given correct standard user credentials" do
     test "and no scope" do
       user = standard_user()
+      client = standard_app(user.default_account_id)
       urt = get_urt(user.default_account_id, user.id)
       input = %{
         "grant_type" => "password",
+        "client_id" => client.id,
         "username" => user.username,
         "password" => "test1234"
       }
@@ -111,9 +122,10 @@ defmodule FreshcomWeb.AuthenticationTest do
       user = standard_user()
       input = %{
         "grant_type" => "password",
+        "client_id" => uuid4(),
         "username" => user.username,
         "password" => "test1234",
-        "scope" => "a:#{user.default_account_id}"
+        "scope" => "acc:#{user.default_account_id}"
       }
 
       assert {:error, %{error: :invalid_grant}} = Authentication.create_access_token(input)
@@ -127,6 +139,7 @@ defmodule FreshcomWeb.AuthenticationTest do
 
       input = %{
         "grant_type" => "password",
+        "client_id" => uuid4(),
         "username" => user.username,
         "password" => "test1234"
       }
@@ -141,9 +154,10 @@ defmodule FreshcomWeb.AuthenticationTest do
 
       input = %{
         "grant_type" => "password",
+        "client_id" => uuid4(),
         "username" => user.username,
         "password" => "test1234",
-        "scope" => "a:#{other_account_id}"
+        "scope" => "acc:#{other_account_id}"
       }
 
       assert {:error, %{error: :invalid_grant}} = Authentication.create_access_token(input)
@@ -151,14 +165,16 @@ defmodule FreshcomWeb.AuthenticationTest do
 
     test "and valid scope" do
       %{default_account_id: account_id} = standard_user()
+      client = standard_app(account_id)
       user = managed_user(account_id)
       urt = get_urt(account_id, user.id)
 
       input = %{
         "grant_type" => "password",
+        "client_id" => client.id,
         "username" => user.username,
         "password" => "test1234",
-        "scope" => "a:#{account_id}"
+        "scope" => "acc:#{account_id}"
       }
 
       assert {:ok, result} = Authentication.create_access_token(input)
@@ -168,9 +184,9 @@ defmodule FreshcomWeb.AuthenticationTest do
       assert result.token_type
     end
 
-    @tag :focus
     test "and valid scope using account handle" do
       %{default_account_id: account_id} = standard_user()
+      client = standard_app(account_id)
       user = managed_user(account_id)
       urt = get_urt(account_id, user.id)
 
@@ -182,9 +198,10 @@ defmodule FreshcomWeb.AuthenticationTest do
 
       input = %{
         "grant_type" => "password",
+        "client_id" => client.id,
         "username" => user.username,
         "password" => "test1234",
-        "scope" => "a:test"
+        "scope" => "acc:test"
       }
 
       assert {:ok, result} = Authentication.create_access_token(input)

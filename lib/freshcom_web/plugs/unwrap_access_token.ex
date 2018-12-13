@@ -16,16 +16,18 @@ defmodule FreshcomWeb.UnwrapAccessTokenPlug do
       conn
       |> assign(:requester_id, vas[:requester_id])
       |> assign(:account_id, vas[:account_id])
+      |> assign(:client_id, vas[:client_id])
     else
       _ ->
         conn
         |> assign(:requester_id, nil)
         |> assign(:account_id, nil)
+        |> assign(:client_id, nil)
     end
   end
 
   def verify_access_token(access_token) do
-    with {true, %{ "prn" => _, "exp" => exp } = fields} <- JWT.verify_token(access_token),
+    with {true, %{"cid" => _, "aid" => _, "exp" => exp} = fields} <- JWT.verify_token(access_token),
          true <- exp >= System.system_time(:second)
     do
       {:ok, fields}
@@ -35,10 +37,10 @@ defmodule FreshcomWeb.UnwrapAccessTokenPlug do
     end
   end
 
-  def extract_vas(%{"prn" => rid, "aud" => account_id, "typ" => "user"}) do
-    {:ok, %{requester_id: rid, account_id: account_id}}
+  def extract_vas(%{"rid" => rid, "aid" => aid, "cid" => cid, "typ" => "user"}) do
+    {:ok, %{requester_id: rid, account_id: aid, client_id: cid}}
   end
-  def extract_vas(%{"prn" => account_id, "typ" => "publishable"}) do
-    {:ok, %{requester_id: nil, account_id: account_id}}
+  def extract_vas(%{"aid" => aid, "cid" => cid, "typ" => "publishable"}) do
+    {:ok, %{requester_id: nil, account_id: aid, client_id: cid}}
   end
 end

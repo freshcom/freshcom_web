@@ -71,6 +71,8 @@ defmodule FreshcomWeb.Controller do
     send_resp(conn, :no_content, "")
   end
 
+  def send_response(other, _, _, _), do: other
+
   def send_response(%Response{data: data, meta: meta}, conn, :index) do
     conn
     |> put_status(:ok)
@@ -102,5 +104,4 @@ defmodule FreshcomWeb.Controller do
   end
 
   def send_response(other, _, _), do: other
-  def send_response(other, _, _, _), do: other
 end
