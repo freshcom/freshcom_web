@@ -44,6 +44,6 @@ defmodule FreshcomWeb.Router do
 
     get "/refresh_token", RefreshTokenController, :show
 
-    resources "/apps", AppController, only: [:index, :show, :update, :delete]
+    resources "/apps", AppController, only: [:create, :index, :show, :update, :delete]
   end
 end

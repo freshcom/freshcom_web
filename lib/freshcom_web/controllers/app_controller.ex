@@ -27,14 +27,13 @@ defmodule FreshcomWeb.AppController do
     end
   end
 
-  # # AddUser
-  # def create(conn, %{"data" => %{"type" => "User"}}) do
-  #   conn
-  #   |> build_request(:create)
-  #   |> normalize_request(:fields, "role", &underscore/1)
-  #   |> Identity.add_user()
-  #   |> send_response(conn, :create)
-  # end
+  # AddApp
+  def create(conn, %{"data" => %{"type" => "App"}}) do
+    conn
+    |> build_request(:create)
+    |> Identity.add_app()
+    |> send_response(conn, :create)
+  end
 
   # # RetrieveCurrentUser
   # def show(%{assigns: assigns} = conn, _) do

@@ -51,63 +51,59 @@ defmodule FreshcomWeb.AppControllerTest do
     end
   end
 
-  # describe "(AddUser) POST /v1/users" do
-  #   test "given unauthorized uat", %{conn: conn} do
-  #     %{default_account_id: account_id} = standard_user()
-  #     client = standard_app(account_id)
-  #     user = managed_user(account_id)
-  #     uat = get_uat(account_id, user.id, client.id)
+  describe "(AddApp) POST /v1/apps" do
+    test "given unauthorized uat", %{conn: conn} do
+      %{default_account_id: account_id} = standard_user()
+      client = system_app()
+      requester = managed_user(account_id, role: "support_specialist")
+      uat = get_uat(account_id, requester.id, client.id)
 
-  #     conn = put_req_header(conn, "authorization", "Bearer #{uat}")
-  #     conn = post(conn, "/v1/users", %{
-  #       "data" => %{
-  #         "type" => "User",
-  #         "attributes" => %{
-  #           "username" => Faker.Internet.user_name(),
-  #           "password" => "test1234",
-  #           "role" => "supportSpecialist"
-  #         }
-  #       }
-  #     })
+      conn = put_req_header(conn, "authorization", "Bearer #{uat}")
+      conn = post(conn, "/v1/apps", %{
+        "data" => %{
+          "type" => "App",
+          "attributes" => %{
+            "name" => Faker.Company.name()
+          }
+        }
+      })
 
-  #     assert json_response(conn, 403)
-  #   end
+      assert json_response(conn, 403)
+    end
 
-  #   test "given no attributes", %{conn: conn} do
-  #     user = standard_user()
-  #     client = standard_app(user.default_account_id)
-  #     uat = get_uat(user.default_account_id, user.id, client.id)
+    test "given no attributes", %{conn: conn} do
+      requester = standard_user()
+      client = system_app()
+      uat = get_uat(requester.default_account_id, requester.id, client.id)
 
-  #     conn = put_req_header(conn, "authorization", "Bearer #{uat}")
-  #     conn = post(conn, "/v1/users", %{
-  #       "data" => %{
-  #         "type" => "User"
-  #       }
-  #     })
+      conn = put_req_header(conn, "authorization", "Bearer #{uat}")
+      conn = post(conn, "/v1/apps", %{
+        "data" => %{
+          "type" => "App"
+        }
+      })
 
-  #     assert json_response(conn, 422)
-  #   end
+      assert json_response(conn, 422)
+    end
 
-  #   test "given valid request", %{conn: conn} do
-  #     requester = standard_user()
-  #     client = standard_app(requester.default_account_id)
-  #     uat = get_uat(requester.default_account_id, requester.id, client.id)
+    test "given valid request", %{conn: conn} do
+      requester = standard_user()
+      client = system_app()
+      uat = get_uat(requester.default_account_id, requester.id, client.id)
 
-  #     conn = put_req_header(conn, "authorization", "Bearer #{uat}")
-  #     conn = post(conn, "/v1/users", %{
-  #       "data" => %{
-  #         "type" => "User",
-  #         "attributes" => %{
-  #           "username" => Faker.Internet.user_name(),
-  #           "password" => "test1234",
-  #           "role" => "supportSpecialist"
-  #         }
-  #       }
-  #     })
+      conn = put_req_header(conn, "authorization", "Bearer #{uat}")
+      conn = post(conn, "/v1/apps", %{
+        "data" => %{
+          "type" => "App",
+          "attributes" => %{
+            "name" => Faker.Company.name()
+          }
+        }
+      })
 
-  #     assert response = json_response(conn, 201)
-  #   end
-  # end
+      assert response = json_response(conn, 201)
+    end
+  end
 
   # describe "(RetrieveUser) GET /v1/users/:id" do
   #   test "given no access token", %{conn: conn} do
