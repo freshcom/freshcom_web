@@ -2,7 +2,7 @@ defmodule FreshcomWeb.Authentication do
   @moduledoc false
 
   import FCSupport.Normalization, only: [atomize_keys: 2]
-  alias Freshcom.{Request, Identity}
+  alias Freshcom.{Request, Identity, Account}
 
   use OK.Pipe
 
@@ -231,7 +231,7 @@ defmodule FreshcomWeb.Authentication do
   defp normalize_result(other), do: other
 
   defp account_id(account_id_or_handle) do
-    case UUID.info(account_id_or_handle) do
+    case UUID.info(Account.bare_id(account_id_or_handle)) do
       {:ok, _} ->
         account_id_or_handle
 

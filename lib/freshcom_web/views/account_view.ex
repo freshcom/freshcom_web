@@ -3,6 +3,7 @@ defmodule FreshcomWeb.AccountView do
   use JaSerializer.PhoenixView
 
   attributes [
+    :prefixed_id,
     :name,
     :handle,
     :mode,
