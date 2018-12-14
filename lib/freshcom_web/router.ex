@@ -40,5 +40,7 @@ defmodule FreshcomWeb.Router do
     resources "/users", UserController, only: [:index, :show, :update, :delete]
     get "/user", UserController, :show
     put "/users/:id/role", UserController, :change_role
+
+    get "/refresh_token", RefreshTokenController, :show
   end
 end
