@@ -13,7 +13,6 @@ defmodule FreshcomWeb.AppControllerTest do
   end
 
   describe "(ListApp) GET /v1/apps" do
-
     test "given no access token", %{conn: conn} do
       conn = get(conn, "/v1/apps")
 
