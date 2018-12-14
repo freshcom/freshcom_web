@@ -4,7 +4,8 @@ defmodule FreshcomWeb.AppView do
 
   attributes [
     :prefixed_id,
-    :name
+    :name,
+    :inserted_at
   ]
 
   def type do
