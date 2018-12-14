@@ -105,42 +105,6 @@ defmodule FreshcomWeb.AppControllerTest do
     end
   end
 
-  # describe "(RetrieveUser) GET /v1/users/:id" do
-  #   test "given no access token", %{conn: conn} do
-  #     conn = get(conn, "/v1/users/#{uuid4()}")
-
-  #     assert conn.status == 401
-  #   end
-
-  #   test "given unauthorized uat", %{conn: conn} do
-  #     %{default_account_id: account_id} = standard_user()
-  #     requester = managed_user(account_id)
-  #     client = standard_app(account_id)
-  #     uat = get_uat(account_id, requester.id, client.id)
-
-  #     user = managed_user(account_id)
-
-  #     conn = put_req_header(conn, "authorization", "Bearer #{uat}")
-  #     conn = get(conn, "/v1/users/#{user.id}")
-
-  #     assert conn.status == 403
-  #   end
-
-  #   test "given valid uat", %{conn: conn} do
-  #     requester = standard_user()
-  #     client = standard_app(requester.default_account_id)
-  #     uat = get_uat(requester.default_account_id, requester.id, client.id)
-
-  #     user = managed_user(requester.default_account_id)
-
-  #     conn = put_req_header(conn, "authorization", "Bearer #{uat}")
-  #     conn = get(conn, "/v1/users/#{user.id}")
-
-  #     assert response = json_response(conn, 200)
-  #     assert response["data"]["id"] == user.id
-  #   end
-  # end
-
   # describe "(UpdateUser) PATCH /v1/users/:id" do
   #   test "given no access token", %{conn: conn} do
   #     conn = patch(conn, "/v1/users/#{uuid4()}")
@@ -194,38 +158,39 @@ defmodule FreshcomWeb.AppControllerTest do
   #   end
   # end
 
-  # describe "(DeleteUser) DELETE /v1/users/:id" do
-  #   test "given no access token", %{conn: conn} do
-  #     conn = delete(conn, "/v1/users/#{uuid4()}")
+  describe "(DeleteApp) DELETE /v1/apps/:id" do
+    test "given no access token", %{conn: conn} do
+      conn = delete(conn, "/v1/apps/#{uuid4()}")
 
-  #     assert conn.status == 401
-  #   end
+      assert conn.status == 401
+    end
 
-  #   test "given unauthorized uat", %{conn: conn} do
-  #     %{default_account_id: account_id} = standard_user()
-  #     requester = managed_user(account_id)
-  #     client = standard_app(account_id)
-  #     uat = get_uat(account_id, requester.id, client.id)
+    test "given unauthorized uat", %{conn: conn} do
+      %{default_account_id: account_id} = standard_user()
+      requester = managed_user(account_id, role: "support_specialist")
+      client = system_app()
+      uat = get_uat(account_id, requester.id, client.id)
 
-  #     user = managed_user(account_id)
+      app = standard_app(account_id)
 
-  #     conn = put_req_header(conn, "authorization", "Bearer #{uat}")
-  #     conn = delete(conn, "/v1/users/#{user.id}")
+      conn = put_req_header(conn, "authorization", "Bearer #{uat}")
+      conn = delete(conn, "/v1/apps/#{app.id}")
 
-  #     assert conn.status == 403
-  #   end
+      assert conn.status == 403
+    end
 
-  #   test "given valid uat", %{conn: conn} do
-  #     requester = standard_user()
-  #     account_id = requester.default_account_id
-  #     client = standard_app(account_id)
-  #     uat = get_uat(account_id, requester.id, client.id)
-  #     user = managed_user(account_id)
+    test "given valid uat", %{conn: conn} do
+      requester = standard_user()
+      account_id = requester.default_account_id
+      client = system_app()
+      uat = get_uat(account_id, requester.id, client.id)
 
-  #     conn = put_req_header(conn, "authorization", "Bearer #{uat}")
-  #     conn = delete(conn, "/v1/users/#{user.id}")
+      app = standard_app(account_id)
 
-  #     assert conn.status == 204
-  #   end
-  # end
+      conn = put_req_header(conn, "authorization", "Bearer #{uat}")
+      conn = delete(conn, "/v1/apps/#{app.id}")
+
+      assert conn.status == 204
+    end
+  end
 end

@@ -35,15 +35,6 @@ defmodule FreshcomWeb.AppController do
     |> send_response(conn, :create)
   end
 
-  # # RetrieveCurrentUser
-  # def show(%{assigns: assigns} = conn, _) do
-  #   conn
-  #   |> build_request(:show)
-  #   |> Request.put(:identifiers, "id", assigns[:requester_id])
-  #   |> Identity.get_user()
-  #   |> send_response(conn, :show)
-  # end
-
   # # UpdateUser
   # def update(conn, _) do
   #   conn
@@ -52,11 +43,11 @@ defmodule FreshcomWeb.AppController do
   #   |> send_response(conn, :show)
   # end
 
-  # # DeleteUser
-  # def delete(conn, _) do
-  #   conn
-  #   |> build_request(:delete, identifiers: ["id"])
-  #   |> Identity.delete_user()
-  #   |> send_response(conn, :delete, status: :no_content)
-  # end
+  # DeleteApp
+  def delete(conn, _) do
+    conn
+    |> build_request(:delete, identifiers: ["id"])
+    |> Identity.delete_app()
+    |> send_response(conn, :delete, status: :no_content)
+  end
 end
