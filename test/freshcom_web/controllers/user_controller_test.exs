@@ -308,7 +308,7 @@ defmodule FreshcomWeb.UserControllerTest do
       assert response = json_response(conn, 404)
     end
 
-    test "given valid request", %{conn: conn} do
+    test "given valid request with uat", %{conn: conn} do
       requester = standard_user()
       account_id = requester.default_account_id
       client = standard_app(account_id)
@@ -318,6 +318,21 @@ defmodule FreshcomWeb.UserControllerTest do
 
       conn = put_req_header(conn, "authorization", "Bearer #{uat}")
       conn = post(conn, "/v1/password_reset_tokens?id=#{user.id}", %{
+        "data" => %{
+          "type" => "PasswordResetToken"
+        }
+      })
+
+      assert response = json_response(conn, 201)
+      assert response["data"]["id"] == user.id
+    end
+
+    test "given valid request without access token", %{conn: conn} do
+      user = standard_user()
+      client = system_app()
+
+      conn = put_req_header(conn, "authorization", "Bearer #{client.prefixed_id}")
+      conn = post(conn, "/v1/password_reset_tokens?username=#{user.username}", %{
         "data" => %{
           "type" => "PasswordResetToken"
         }

@@ -12,6 +12,8 @@ defmodule FreshcomWeb.UserView do
     :name,
     :role,
     :email_verified,
+    :password_reset_token,
+    :password_reset_token_expires_at,
     :updated_at
   ]
 
