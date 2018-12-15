@@ -317,7 +317,7 @@ defmodule FreshcomWeb.UserControllerTest do
       user = managed_user(account_id)
 
       conn = put_req_header(conn, "authorization", "Bearer #{uat}")
-      conn = post(conn, "/v1/password_reset_tokens?userId=#{user.id}", %{
+      conn = post(conn, "/v1/password_reset_tokens?id=#{user.id}", %{
         "data" => %{
           "type" => "PasswordResetToken"
         }
