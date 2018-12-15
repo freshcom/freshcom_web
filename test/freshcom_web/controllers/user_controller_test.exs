@@ -301,6 +301,32 @@ defmodule FreshcomWeb.UserControllerTest do
     end
   end
 
+  describe "(GeneratePasswordResetToken) POST /v1/password_reset_tokens" do
+    test "given empty request", %{conn: conn} do
+      conn = post(conn, "/v1/password_reset_tokens", %{})
+
+      assert response = json_response(conn, 404)
+    end
+
+    test "given valid request", %{conn: conn} do
+      requester = standard_user()
+      account_id = requester.default_account_id
+      client = standard_app(account_id)
+      uat = get_uat(account_id, requester.id, client.id)
+
+      user = managed_user(account_id)
+
+      conn = put_req_header(conn, "authorization", "Bearer #{uat}")
+      conn = post(conn, "/v1/password_reset_tokens?userId=#{user.id}", %{
+        "data" => %{
+          "type" => "PasswordResetToken"
+        }
+      })
+
+      assert conn.status == 204
+    end
+  end
+
   describe "(ChangePassword) PUT /v1/password" do
     test "given no access token", %{conn: conn} do
       conn = put(conn, "/v1/password", %{})

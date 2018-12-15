@@ -82,6 +82,15 @@ defmodule FreshcomWeb.UserController do
     |> send_response(conn, :show)
   end
 
+  # GeneratePasswordResetToken
+  def generate_password_reset_token(conn, _) do
+    conn
+    |> build_request(:update, identifiers: ["user_id", "username"])
+    |> IO.inspect()
+    |> Identity.generate_password_reset_token()
+    |> send_response(conn, :show, status: :no_content)
+  end
+
   # ChangePassword
   def change_password(conn, _) do
     conn

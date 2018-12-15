@@ -27,6 +27,7 @@ defmodule FreshcomWeb.Router do
 
     post "/users", UserController, :create
     put "/password", UserController, :change_password
+    post "/password_reset_tokens", UserController, :generate_password_reset_token
   end
 
   scope "/v1", FreshcomWeb do
