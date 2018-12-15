@@ -35,13 +35,13 @@ defmodule FreshcomWeb.AppController do
     |> send_response(conn, :create)
   end
 
-  # # UpdateUser
-  # def update(conn, _) do
-  #   conn
-  #   |> build_request(:update)
-  #   |> Identity.update_user_info()
-  #   |> send_response(conn, :show)
-  # end
+  # UpdateApp
+  def update(conn, _) do
+    conn
+    |> build_request(:update)
+    |> Identity.update_app()
+    |> send_response(conn, :show)
+  end
 
   # DeleteApp
   def delete(conn, _) do

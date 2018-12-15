@@ -105,58 +105,57 @@ defmodule FreshcomWeb.AppControllerTest do
     end
   end
 
-  # describe "(UpdateUser) PATCH /v1/users/:id" do
-  #   test "given no access token", %{conn: conn} do
-  #     conn = patch(conn, "/v1/users/#{uuid4()}")
+  describe "(UpdateApp) PATCH /v1/apps/:id" do
+    test "given no access token", %{conn: conn} do
+      conn = patch(conn, "/v1/apps/#{uuid4()}")
 
-  #     assert conn.status == 401
-  #   end
+      assert conn.status == 401
+    end
 
-  #   test "given unauthorized uat", %{conn: conn} do
-  #     %{default_account_id: account_id} = standard_user()
-  #     requester = managed_user(account_id)
-  #     client = standard_app(account_id)
-  #     uat = get_uat(account_id, requester.id, client.id)
+    test "given unauthorized uat", %{conn: conn} do
+      %{default_account_id: account_id} = standard_user()
+      requester = managed_user(account_id, role: "support_specialist")
+      client = system_app()
+      uat = get_uat(account_id, requester.id, client.id)
 
-  #     user = managed_user(account_id)
+      app = standard_app(account_id)
 
+      conn = put_req_header(conn, "authorization", "Bearer #{uat}")
+      conn = patch(conn, "/v1/apps/#{app.id}", %{
+        "data" => %{
+          "type" => "App",
+          "attributes" => %{
+            "name" => Faker.Company.name()
+          }
+        }
+      })
 
-  #     conn = put_req_header(conn, "authorization", "Bearer #{uat}")
-  #     conn = patch(conn, "/v1/users/#{user.id}", %{
-  #       "data" => %{
-  #         "type" => "User",
-  #         "attributes" => %{
-  #           "username" => Faker.Internet.user_name()
-  #         }
-  #       }
-  #     })
+      assert conn.status == 403
+    end
 
-  #     assert conn.status == 403
-  #   end
+    test "given valid uat", %{conn: conn} do
+      requester = standard_user()
+      account_id = requester.default_account_id
+      client = system_app()
+      uat = get_uat(account_id, requester.id, client.id)
 
-  #   test "given valid uat", %{conn: conn} do
-  #     requester = standard_user()
-  #     account_id = requester.default_account_id
-  #     client = standard_app(account_id)
-  #     uat = get_uat(account_id, requester.id, client.id)
+      app = standard_app(account_id)
 
-  #     user = managed_user(account_id)
+      new_name = Faker.Company.name()
+      conn = put_req_header(conn, "authorization", "Bearer #{uat}")
+      conn = patch(conn, "/v1/apps/#{app.id}", %{
+        "data" => %{
+          "type" => "App",
+          "attributes" => %{
+            "name" => new_name
+          }
+        }
+      })
 
-  #     new_username = Faker.Internet.user_name()
-  #     conn = put_req_header(conn, "authorization", "Bearer #{uat}")
-  #     conn = patch(conn, "/v1/users/#{user.id}", %{
-  #       "data" => %{
-  #         "type" => "User",
-  #         "attributes" => %{
-  #           "username" => new_username
-  #         }
-  #       }
-  #     })
-
-  #     assert response = json_response(conn, 200)
-  #     assert response["data"]["attributes"]["username"] == new_username
-  #   end
-  # end
+      assert response = json_response(conn, 200)
+      assert response["data"]["attributes"]["name"] == new_name
+    end
+  end
 
   describe "(DeleteApp) DELETE /v1/apps/:id" do
     test "given no access token", %{conn: conn} do
