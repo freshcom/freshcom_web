@@ -12,6 +12,42 @@ defmodule FreshcomWeb.AccountControllerTest do
     %{conn: conn}
   end
 
+  describe "(ListAccount) GET /v1/accounts" do
+    test "given no access token", %{conn: conn} do
+      conn = get(conn, "/v1/accounts")
+
+      assert conn.status == 401
+    end
+
+    test "given unauthorized uat", %{conn: conn} do
+      %{default_account_id: account_id} = standard_user()
+      client = system_app()
+      requester = managed_user(account_id)
+      uat = get_uat(account_id, requester.id, client.id)
+
+      conn = put_req_header(conn, "authorization", "Bearer #{uat}")
+      conn = get(conn, "/v1/accounts")
+
+      assert conn.status == 403
+    end
+
+    test "given valid uat", %{conn: conn} do
+      requester = standard_user()
+      client = system_app()
+      uat = get_uat(requester.default_account_id, requester.id, client.id)
+
+      account(requester.id)
+
+      conn = put_req_header(conn, "authorization", "Bearer #{uat}")
+      conn = get(conn, "/v1/accounts")
+
+      assert response = json_response(conn, 200)
+      assert length(response["data"]) == 2
+      assert response["meta"]["totalCount"] == 2
+      assert response["meta"]["allCount"] == 2
+    end
+  end
+
   describe "(CreateAccount) POST /v1/accounts" do
     test "given unauthorized uat", %{conn: conn} do
       %{default_account_id: account_id} = standard_user()

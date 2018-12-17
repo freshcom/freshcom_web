@@ -38,7 +38,7 @@ defmodule FreshcomWeb.Router do
     # Identity
     get "/account", AccountController, :show
     patch "/account", AccountController, :update
-    post "/accounts", AccountController, :create
+    resources "/accounts", AccountController, only: [:create, :index, :delete]
 
     resources "/users", UserController, only: [:index, :show, :update, :delete]
     get "/user", UserController, :show
