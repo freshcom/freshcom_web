@@ -12,6 +12,48 @@ defmodule FreshcomWeb.AccountControllerTest do
     %{conn: conn}
   end
 
+  describe "(CreateAccount) POST /v1/accounts" do
+    test "given unauthorized uat", %{conn: conn} do
+      %{default_account_id: account_id} = standard_user()
+      client = system_app()
+      requester = managed_user(account_id)
+      uat = get_uat(account_id, requester.id, client.id)
+
+      conn = put_req_header(conn, "authorization", "Bearer #{uat}")
+      conn = post(conn, "/v1/accounts", %{
+        "data" => %{
+          "type" => "Account",
+          "attributes" => %{
+            "name" => Faker.Company.name(),
+            "defaultLocale" => "en"
+          }
+        }
+      })
+
+      assert json_response(conn, 403)
+    end
+
+    test "given valid request", %{conn: conn} do
+      requester = standard_user()
+      client = system_app()
+      uat = get_uat(requester.default_account_id, requester.id, client.id)
+
+      conn = put_req_header(conn, "authorization", "Bearer #{uat}")
+      conn = post(conn, "/v1/accounts", %{
+        "data" => %{
+          "type" => "Account",
+          "attributes" => %{
+            "name" => Faker.Company.name(),
+            "defaultLocale" => "zh-CN"
+          }
+        }
+      })
+
+      assert response = json_response(conn, 201)
+      assert response["data"]["attributes"]["defaultLocale"] == "zh-CN"
+    end
+  end
+
   describe "(RetrieveCurrentAccount) GET /v1/account" do
     test "given no access token", %{conn: conn} do
       conn = get(conn, "/v1/account")

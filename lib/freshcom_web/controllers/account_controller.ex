@@ -8,6 +8,14 @@ defmodule FreshcomWeb.AccountController do
 
   plug :scrub_params, "data" when action in [:create, :update]
 
+  # CreateAccount
+  def create(conn, %{"data" => %{"type" => "Account"}}) do
+    conn
+    |> build_request(:create)
+    |> Identity.create_account()
+    |> send_response(conn, :create)
+  end
+
   # RetrieveCurrentAccount
   def show(conn, _) do
     conn

@@ -346,7 +346,7 @@ defmodule FreshcomWeb.UserControllerTest do
     test "given no access token", %{conn: conn} do
       conn = put(conn, "/v1/password", %{})
 
-      assert response = json_response(conn, 422)
+      assert response = json_response(conn, 404)
     end
 
     test "given unauthorized uat", %{conn: conn} do
