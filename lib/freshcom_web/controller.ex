@@ -84,6 +84,10 @@ defmodule FreshcomWeb.Controller do
     send_resp(conn, :no_content, "")
   end
 
+  def send_response({:ok, _}, conn, _, status: :accepted) do
+    send_resp(conn, :accepted, "")
+  end
+
   def send_response(other, _, _, _), do: other
 
   def send_response(%Response{data: data, meta: meta}, conn, :index) do

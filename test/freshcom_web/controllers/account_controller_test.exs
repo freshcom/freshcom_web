@@ -156,4 +156,40 @@ defmodule FreshcomWeb.AccountControllerTest do
       assert response["data"]["attributes"]["name"] == new_name
     end
   end
+
+  describe "(CloseAccount) DELETE /v1/accounts/:id" do
+    test "given no access token", %{conn: conn} do
+      conn = delete(conn, "/v1/accounts/#{uuid4()}")
+
+      assert conn.status == 401
+    end
+
+    test "given unauthorized uat", %{conn: conn} do
+      %{default_account_id: account_id} = standard_user()
+      requester = managed_user(account_id)
+      client = system_app()
+      uat = get_uat(account_id, requester.id, client.id)
+
+      account = account(requester.id)
+
+      conn = put_req_header(conn, "authorization", "Bearer #{uat}")
+      conn = delete(conn, "/v1/accounts/#{account.id}")
+
+      assert conn.status == 403
+    end
+
+    test "given valid uat", %{conn: conn} do
+      requester = standard_user()
+      account_id = requester.default_account_id
+      client = system_app()
+      uat = get_uat(account_id, requester.id, client.id)
+
+      account = account(requester.id)
+
+      conn = put_req_header(conn, "authorization", "Bearer #{uat}")
+      conn = delete(conn, "/v1/accounts/#{account.id}")
+
+      assert conn.status == 202
+    end
+  end
 end

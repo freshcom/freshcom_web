@@ -50,4 +50,12 @@ defmodule FreshcomWeb.AccountController do
     |> Identity.update_account_info()
     |> send_response(conn, :show)
   end
+
+  # CloseAccount
+  def delete(conn, _) do
+    conn
+    |> build_request(:delete, identifiers: ["id"])
+    |> Identity.close_account()
+    |> send_response(conn, :delete, status: :accepted)
+  end
 end
