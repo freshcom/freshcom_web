@@ -73,6 +73,13 @@ defmodule FreshcomWeb.UserController do
     |> send_response(conn, :show)
   end
 
+  def change_default_account(conn, _) do
+    conn
+    |> build_request(:update)
+    |> Identity.change_default_account()
+    |> send_response(conn, :show)
+  end
+
   # ChangeUserRole
   def change_role(conn, _) do
     conn

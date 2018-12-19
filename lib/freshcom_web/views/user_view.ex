@@ -19,9 +19,13 @@ defmodule FreshcomWeb.UserView do
     :updated_at
   ]
 
+  has_one :default_account, serializer: FreshcomWeb.IdentifierView, identifiers: :always
+
   def type do
     "User"
   end
+
+  def default_account(user, _), do: %{type: "Account", id: user.default_account_id}
 
   def role(user) do
     camelize(user.role)

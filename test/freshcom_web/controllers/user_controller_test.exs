@@ -251,6 +251,52 @@ defmodule FreshcomWeb.UserControllerTest do
     end
   end
 
+  describe "(ChangeDefaultAccount) PATCH /v1/user/relationships/default_account" do
+    test "given no access token", %{conn: conn} do
+      conn = patch(conn, "/v1/user/relationships/default_account")
+
+      assert conn.status == 401
+    end
+
+    test "given unauthorized uat", %{conn: conn} do
+      %{default_account_id: account_id} = standard_user()
+      requester = managed_user(account_id)
+      client = system_app()
+      uat = get_uat(account_id, requester.id, client.id)
+
+      account = account(requester.id)
+
+      conn = put_req_header(conn, "authorization", "Bearer #{uat}")
+      conn = patch(conn, "/v1/user/relationships/default_account", %{
+        "data" => %{
+          "id" => account.id,
+          "type" => "Account"
+        }
+      })
+
+      assert conn.status == 403
+    end
+
+    test "given valid uat", %{conn: conn} do
+      requester = standard_user()
+      client = system_app()
+      uat = get_uat(requester.default_account_id, requester.id, client.id)
+
+      account = account(requester.id)
+
+      conn = put_req_header(conn, "authorization", "Bearer #{uat}")
+      conn = patch(conn, "/v1/user/relationships/default_account", %{
+        "data" => %{
+          "id" => account.id,
+          "type" => "Account"
+        }
+      })
+
+      assert response = json_response(conn, 200)
+      assert response["data"]["id"] == requester.id
+    end
+  end
+
   describe "(ChangeUserRole) PUT /v1/users/:id/role" do
     test "given no access token", %{conn: conn} do
       conn = put(conn, "/v1/users/#{uuid4()}/role")

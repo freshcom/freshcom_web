@@ -4,7 +4,6 @@ defmodule FreshcomWeb.AccountView do
 
   attributes [
     :prefixed_id,
-    :system_label,
     :name,
     :handle,
     :mode,
