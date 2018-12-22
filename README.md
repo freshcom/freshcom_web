@@ -17,7 +17,7 @@ Since freshcom_web depends on [freshcom](https://github.com/freshcom/freshcom) t
 
 ### Setup
 
-#### Install Mix Depedencies
+#### 1. Install Mix Depedencies
 
 Since [freshcom](https://github.com/freshcom/freshcom) is not yet published as a mix package, you will need to clone it first to make it available locally.
 
@@ -28,7 +28,7 @@ $ cd freshcom_web
 $ mix deps.get
 ```
 
-#### Generate RSA Key Pairs
+#### 2. Generate RSA Key Pairs
 
 Freshcom API uses RSA key pairs to sign tokens used for authentication so use the following to generate the key pairs.
 
@@ -41,18 +41,18 @@ $ openssl rsa -in private.pem -outform PEM -pubout -out public.pem
 
 You should see two files get created inside the `keys/dev` directory.
 
-#### Set Environment Variables
+#### 3. Set Environment Variables
 
 Once all the mix dependencies are installed we need to config the environment variables. Please copy paste `.env.example` and rename it to `.env` add in all the relevant environment variables. Then run `source .env` to set all the variables.
 
-#### Setup Database
+#### 4. Setup Database
 
 Setup the database needed by freshcom with `mix freshcom.setup` which will do the following for you:
 
 - Create the projection (read side) database and run all the relevant migrations
 - Create and initialize the eventstore (write side) database
 
-#### Create a freshcom app for freshcom_dashboard (optional)
+#### 5. Create a freshcom app for freshcom_dashboard (optional)
 
 If you plan to use [freshcom_dashboard](https://github.com/freshcom/freshcom_dashboard) you will need to create a freshcom app so that freshcom_dashboard can use the app ID to identify itself with the JSON API in order to gain access all the API it needs. Simply run the following to get the app created and its app ID will be displayed.
 
@@ -62,7 +62,7 @@ $ mix freshcom.init_dashboard
 
 To see where to use this app ID please view the guide for [freshcom_dashboard](https://github.com/freshcom/freshcom_dashboard).
 
-#### Run
+#### 6. Run
 
 freshcom_web is built using [phoenix](https://phoenixframework.org/) so starting the server is simply ```mix phx.server```.
 
