@@ -3,7 +3,7 @@
 This repo contains the web layer of the [Freshcom Project](https://github.com/freshcom/freshcom). It builds on top of [freshcom](https://github.com/freshcom/freshcom) and provides a [JSON API](https://jsonapi.org/). This repo does not contain any UI
 
 - For a back office UI please checkout [freshcom_dashboard](https://github.com/freshcom/freshcom_dashboard).
-- You will have to build your own storefront UI, we recommand [VueJS](https://vuejs.org/) but solid SPA framework will do.
+- You will have to build your own storefront UI, we recommand [VueJS](https://vuejs.org/) but any solid SPA framework will do.
 
 ## Status of Development
 
