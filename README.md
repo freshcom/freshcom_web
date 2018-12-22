@@ -47,7 +47,7 @@ Once all the mix dependencies are installed we need to config the environment va
 
 #### 4. Setup Database
 
-Setup the database needed by freshcom with `mix freshcom.setup` which will do the following for you:
+Setup the database needed by [freshcom](https://github.com/freshcom/freshcom) with `mix freshcom.setup` which will do the following for you:
 
 - Create the projection (read side) database and run all the relevant migrations
 - Create and initialize the eventstore (write side) database
