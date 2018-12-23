@@ -62,14 +62,11 @@ $ mix freshcom.init_dashboard
 
 To see where to use this app ID please view the guide for [freshcom_dashboard](https://github.com/freshcom/freshcom_dashboard).
 
-#### 6. Run
+### Run
 
 freshcom_web is built using [phoenix](https://phoenixframework.org/) so starting the server is simply ```mix phx.server```.
 
 Once the server is running you can try hit any of the endpoint provided to test if its working. API documentation can be found [here]()
-
-#### 
-
 
 ## Learn more
 
