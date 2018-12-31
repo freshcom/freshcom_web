@@ -120,7 +120,7 @@ defmodule FreshcomWeb.Authentication do
 
   defp get_user(username, password) do
     %Request{
-      identifiers: %{
+      identifier: %{
         "type" => "standard",
         "username" => username,
         "password" => password
@@ -137,7 +137,7 @@ defmodule FreshcomWeb.Authentication do
   defp get_user(username, password, account_id) do
     %Request{
       account_id: account_id,
-      identifiers: %{
+      identifier: %{
         "type" => "managed",
         "username" => username,
         "password" => password
@@ -152,7 +152,7 @@ defmodule FreshcomWeb.Authentication do
   defp get_refresh_token(user, account_id) do
     %Request{
       account_id: account_id,
-      identifiers: %{"user_id" => user.id},
+      identifier: %{"user_id" => user.id},
       _role_: "system"
     }
     |> Identity.get_api_key()
@@ -161,7 +161,7 @@ defmodule FreshcomWeb.Authentication do
   end
 
   defp get_refresh_token(id) when is_binary(id) do
-    %Request{identifiers: %{"id" => id}, _role_: "system"}
+    %Request{identifier: %{"id" => id}, _role_: "system"}
     |> Identity.get_api_key()
     |> unwrap_response()
     |> refresh_token_result()
@@ -170,7 +170,7 @@ defmodule FreshcomWeb.Authentication do
   defp get_refresh_token(user) do
     %Request{
       account_id: user.default_account_id,
-      identifiers: %{"user_id" => user.id},
+      identifier: %{"user_id" => user.id},
       _role_: "system"
     }
     |> Identity.get_api_key()
@@ -181,7 +181,7 @@ defmodule FreshcomWeb.Authentication do
   defp exchange_refresh_token(id, account_id) do
     %Request{
       account_id: account_id,
-      identifiers: %{"id" => id},
+      identifier: %{"id" => id},
       _role_: "system"
     }
     |> Identity.exchange_api_key()
@@ -242,7 +242,7 @@ defmodule FreshcomWeb.Authentication do
 
   defp account_handle_to_id(handle) do
     request = %Request{
-      identifiers: %{"handle" => handle},
+      identifier: %{"handle" => handle},
       _role_: "system"
     }
 
@@ -254,7 +254,7 @@ defmodule FreshcomWeb.Authentication do
 
   defp get_app(id) do
     request = %Request{
-      identifiers: %{"id" => id},
+      identifier: %{"id" => id},
       _role_: "system"
     }
 

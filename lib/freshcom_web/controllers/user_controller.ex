@@ -60,7 +60,7 @@ defmodule FreshcomWeb.UserController do
   def show(%{assigns: assigns} = conn, _) do
     conn
     |> build_request(:show)
-    |> Request.put(:identifiers, "id", assigns[:requester_id])
+    |> Request.put(:identifier, "id", assigns[:requester_id])
     |> Identity.get_user()
     |> send_response(conn, :show)
   end
@@ -93,7 +93,7 @@ defmodule FreshcomWeb.UserController do
   def generate_password_reset_token(%{assigns: assigns} = conn, _) do
     response =
       conn
-      |> build_request(:update, identifiers: ["id", "username"])
+      |> build_request(:update, identifier: ["id", "username"])
       |> Identity.generate_password_reset_token()
 
     if assigns[:requester_id] do
@@ -106,7 +106,7 @@ defmodule FreshcomWeb.UserController do
   # ChangePassword
   def change_password(conn, _) do
     conn
-    |> build_request(:update, identifiers: ["id", "reset_token"])
+    |> build_request(:update, identifier: ["id", "reset_token"])
     |> Identity.change_password()
     |> send_response(conn, :show)
   end
@@ -114,7 +114,7 @@ defmodule FreshcomWeb.UserController do
   # DeleteUser
   def delete(conn, _) do
     conn
-    |> build_request(:delete, identifiers: ["id"])
+    |> build_request(:delete, identifier: ["id"])
     |> Identity.delete_user()
     |> send_response(conn, :delete, status: :no_content)
   end

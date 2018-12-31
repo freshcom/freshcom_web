@@ -46,7 +46,7 @@ defmodule FreshcomWeb.AppController do
   # DeleteApp
   def delete(conn, _) do
     conn
-    |> build_request(:delete, identifiers: ["id"])
+    |> build_request(:delete, identifier: ["id"])
     |> Identity.delete_app()
     |> send_response(conn, :delete, status: :no_content)
   end

@@ -41,7 +41,7 @@ defmodule FreshcomWeb.Controller do
       requester_id: assigns[:requester_id],
       client_id: assigns[:client_id],
       account_id: assigns[:account_id],
-      identifiers: Map.take(params, ["id"]),
+      identifier: Map.take(params, ["id"]),
       include: params["include"],
       locale: params["locale"]
     }
@@ -56,7 +56,7 @@ defmodule FreshcomWeb.Controller do
       requester_id: assigns[:requester_id],
       client_id: assigns[:client_id],
       account_id: assigns[:account_id],
-      identifiers: Map.take(params, opts[:identifiers] || ["id"]),
+      identifier: Map.take(params, opts[:identifier] || ["id"]),
       data: data,
       include: params["include"],
       locale: params["locale"]
@@ -68,7 +68,7 @@ defmodule FreshcomWeb.Controller do
       requester_id: assigns[:requester_id],
       client_id: assigns[:client_id],
       account_id: assigns[:account_id],
-      identifiers: Map.take(params, opts[:identifiers] || ["id"])
+      identifier: Map.take(params, opts[:identifier] || ["id"])
     }
   end
 
