@@ -35,7 +35,7 @@ defmodule FreshcomWeb.Authentication do
   # %{ "grant_type" => "password", "username" => "test1@example.com", "password" => "test1234" }
   # %{ "grant_type" => "refresh_token", "refresh_token" => "user-refresh-token" }
 
-  alias Freshcom.RefreshToken
+  alias Freshcom.APIKey
   alias FreshcomWeb.JWT
 
   def create_access_token(%{"grant_type" => grant_type}) when grant_type not in ["refresh_token", "password"] do
@@ -155,14 +155,14 @@ defmodule FreshcomWeb.Authentication do
       identifiers: %{"user_id" => user.id},
       _role_: "system"
     }
-    |> Identity.get_refresh_token()
+    |> Identity.get_api_key()
     |> unwrap_response()
     |> refresh_token_result()
   end
 
   defp get_refresh_token(id) when is_binary(id) do
     %Request{identifiers: %{"id" => id}, _role_: "system"}
-    |> Identity.get_refresh_token()
+    |> Identity.get_api_key()
     |> unwrap_response()
     |> refresh_token_result()
   end
@@ -173,7 +173,7 @@ defmodule FreshcomWeb.Authentication do
       identifiers: %{"user_id" => user.id},
       _role_: "system"
     }
-    |> Identity.get_refresh_token()
+    |> Identity.get_api_key()
     |> unwrap_response()
     |> refresh_token_result()
   end
@@ -184,7 +184,7 @@ defmodule FreshcomWeb.Authentication do
       identifiers: %{"id" => id},
       _role_: "system"
     }
-    |> Identity.exchange_refresh_token()
+    |> Identity.exchange_api_key()
     |> unwrap_response()
     |> refresh_token_result()
   end
@@ -195,7 +195,7 @@ defmodule FreshcomWeb.Authentication do
   defp password_result({:error, _}), do: {:error, :invalid_password}
   defp password_result(other), do: other
 
-  defp to_access_token(%RefreshToken{user_id: nil, account_id: aid, prefixed_id: rtid}, client_id) do
+  defp to_access_token(%APIKey{user_id: nil, account_id: aid, prefixed_id: rtid}, client_id) do
     %{
       access_token: JWT.sign_token(%{
         exp: System.system_time(:second) + @token_expiry_seconds,
@@ -209,7 +209,7 @@ defmodule FreshcomWeb.Authentication do
     }
   end
 
-  defp to_access_token(%RefreshToken{user_id: rid, account_id: aid, prefixed_id: rtid}, client_id) do
+  defp to_access_token(%APIKey{user_id: rid, account_id: aid, prefixed_id: rtid}, client_id) do
     %{
       access_token: JWT.sign_token(%{
         exp: System.system_time(:second) + @token_expiry_seconds,

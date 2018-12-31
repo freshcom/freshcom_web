@@ -10,7 +10,7 @@ defmodule FreshcomWeb.RefreshTokenController do
   def show(conn, _) do
     conn
     |> build_request(:show)
-    |> Identity.get_refresh_token()
+    |> Identity.get_api_key()
     |> send_response(conn, :show)
   end
 end
