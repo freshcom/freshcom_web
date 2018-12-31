@@ -23,7 +23,7 @@ defmodule FreshcomWeb.Controller do
   end
 
   def build_request(%{assigns: assigns, params: params}, :create, _) do
-    fields =
+    data =
       Params.to_attributes(params["data"] || %{})
       |> Map.drop(["type"])
 
@@ -31,7 +31,7 @@ defmodule FreshcomWeb.Controller do
       requester_id: assigns[:requester_id],
       client_id: assigns[:client_id],
       account_id: assigns[:account_id],
-      fields: fields,
+      data: data,
       include: params["include"]
     }
   end
@@ -48,7 +48,7 @@ defmodule FreshcomWeb.Controller do
   end
 
   def build_request(%{assigns: assigns, params: params}, :update, opts) do
-    fields =
+    data =
       Params.to_attributes(params["data"] || %{})
       |> Map.drop(["type"])
 
@@ -57,7 +57,7 @@ defmodule FreshcomWeb.Controller do
       client_id: assigns[:client_id],
       account_id: assigns[:account_id],
       identifiers: Map.take(params, opts[:identifiers] || ["id"]),
-      fields: fields,
+      data: data,
       include: params["include"],
       locale: params["locale"]
     }
@@ -72,8 +72,8 @@ defmodule FreshcomWeb.Controller do
     }
   end
 
-  def normalize_request(req, :fields, key, func) do
-    normalize_by(req, :fields, key, &is_binary/1, func)
+  def normalize_request(req, :data, key, func) do
+    normalize_by(req, :data, key, &is_binary/1, func)
   end
 
   def normalize_request(req, :filter, key, func) do

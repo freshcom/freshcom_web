@@ -193,7 +193,7 @@ defmodule FreshcomWeb.AuthenticationTest do
       Identity.update_account_info(%Request{
         _role_: "system",
         account_id: account_id,
-        fields: %{"handle" => "test"}
+        data: %{"handle" => "test"}
       })
 
       input = %{
