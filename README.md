@@ -13,7 +13,7 @@ Currently in early development with estimated beta version in 6-12 months.
 
 ### External Dependencies
 
-Since freshcom_web depends on [freshcom](https://github.com/freshcom/freshcom) to do all the heavy lifting, please checkout the [external dependencies of freshcom](https://github.com/freshcom/freshcom) and make sure you have all the external dependencies. While there are a few hard external dependencies right now, our goal is to remove most of those hard dependencies when we hit beta.
+Since freshcom_web depends on [freshcom](https://github.com/freshcom/freshcom) to do all the heavy lifting, please checkout the [external dependencies of freshcom](https://github.com/freshcom/freshcom) and make sure you have all the external dependencies.
 
 ### Setup
 
