@@ -17,7 +17,8 @@ config :logger, :console, format: "[$level] $message\n"
 # in production as building large stacktraces may be expensive.
 config :phoenix, :stacktrace_depth, 20
 
-config :fc_state_storage, adapter: FCStateStorage.DynamoAdapter
+config :fc_state_storage, :adapter, FCStateStorage.RedisAdapter
+config :fc_state_storage, :redis, "redis://localhost:6379/0"
 
 config :freshcom, Freshcom.Repo,
   adapter: Ecto.Adapters.Postgres,
