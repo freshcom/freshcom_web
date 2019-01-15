@@ -7,7 +7,7 @@ This repo contains the web layer of the [Freshcom Project](https://github.com/fr
 
 ## Status of Development
 
-Currently in early development with estimated beta version in 6-12 months.
+Currently in early development with estimated alpha version in 6-12 months.
 
 ## Getting Started
 
