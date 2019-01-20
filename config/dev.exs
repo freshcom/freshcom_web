@@ -2,7 +2,8 @@ use Mix.Config
 
 config :eventstore, EventStore.Storage,
   serializer: Commanded.Serialization.JsonSerializer,
-  username: System.get_env("DB_USERNAME"),
+  username: System.get_env("EVENTSTORE_DB_USERNAME"),
+  password: System.get_env("EVENTSTORE_DB_PASSWORD"),
   database: "freshcom_eventstore_dev",
   hostname: "localhost",
   pool_size: 10
@@ -24,7 +25,8 @@ config :freshcom, Freshcom.Repo,
   adapter: Ecto.Adapters.Postgres,
   database: "freshcom_projections_dev",
   hostname: "localhost",
-  username: System.get_env("DB_USERNAME"),
+  username: System.get_env("PROJECTION_DB_USERNAME"),
+  password: System.get_env("PROJECTION_DB_PASSWORD"),
   pool_size: 10
 
 config :freshcom_web, FreshcomWeb.Endpoint,
