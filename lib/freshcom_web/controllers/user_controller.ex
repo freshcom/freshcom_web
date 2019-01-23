@@ -1,9 +1,8 @@
 defmodule FreshcomWeb.UserController do
   use FreshcomWeb, :controller
-  import FreshcomWeb.Controller
   import FreshcomWeb.Normalization, only: [underscore: 1]
 
-  alias Freshcom.{Identity, Response}
+  alias Freshcom.Identity
 
   action_fallback FreshcomWeb.FallbackController
 
@@ -11,24 +10,10 @@ defmodule FreshcomWeb.UserController do
 
   # ListUser
   def index(conn, _) do
-    req =
-      conn
-      |> build_request(:index)
-      |> normalize_request(:filter, "role", &underscore/1)
-
-    case Identity.list_user(req) do
-      {:ok, resp} ->
-        {:ok, %{data: total_count}} = Identity.count_user(req)
-        {:ok, %{data: all_count}} = Identity.count_user(%{req | filter: [], search: nil})
-
-        resp
-        |> Response.put_meta(:total_count, total_count)
-        |> Response.put_meta(:all_count, all_count)
-        |> send_response(conn, :index)
-
-      other ->
-        send_response(other, conn, :index)
-    end
+    conn
+    |> build_request(:index)
+    |> list_and_count(&Identity.list_user/1, &Identity.count_user/1)
+    |> send_response(conn, :index)
   end
 
   # RegisterUser

@@ -121,4 +121,19 @@ defmodule FreshcomWeb.Controller do
   end
 
   def send_response(other, _, _), do: other
+
+  def list_and_count(req, list_func, count_func) do
+    case list_func.(req) do
+      {:ok, resp} ->
+        {:ok, %{data: total_count}} = count_func.(req)
+        {:ok, %{data: all_count}} = count_func.(%{req | filter: [], search: nil})
+
+        resp
+        |> Response.put_meta(:total_count, total_count)
+        |> Response.put_meta(:all_count, all_count)
+
+      other ->
+        other
+    end
+  end
 end

@@ -1,6 +1,6 @@
 defmodule FreshcomWeb.TokenControllerTest do
   use FreshcomWeb.ConnCase
-  import Freshcom.{Fixture, Shortcut}
+  import Freshcom.Shortcut
 
   setup do
     conn =

@@ -1,6 +1,5 @@
 defmodule FreshcomWeb.RefreshTokenController do
   use FreshcomWeb, :controller
-  import FreshcomWeb.Controller
 
   alias Freshcom.Identity
 

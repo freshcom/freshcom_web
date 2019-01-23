@@ -1,6 +1,5 @@
 defmodule FreshcomWeb.AccountControllerTest do
   use FreshcomWeb.ConnCase
-  import Freshcom.Fixture
   import FreshcomWeb.Shortcut
 
   setup do

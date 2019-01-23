@@ -20,8 +20,9 @@ defmodule FreshcomWeb.ConnCase do
       # Import conveniences for testing with connections
       use Phoenix.ConnTest
 
-      import FreshcomWeb.Router.Helpers
       import UUID
+      import Freshcom.Fixture.Identity
+      import FreshcomWeb.Router.Helpers
 
       alias Freshcom.Request
 

@@ -1,30 +1,18 @@
 defmodule FreshcomWeb.AccountController do
   use FreshcomWeb, :controller
-  import FreshcomWeb.Controller
 
-  alias Freshcom.{Identity, Response}
+  alias Freshcom.Identity
 
   action_fallback FreshcomWeb.FallbackController
 
   plug :scrub_params, "data" when action in [:create, :update]
 
-  # ListUser
+  # ListAccount
   def index(conn, _) do
-    req = build_request(conn, :index)
-
-    case Identity.list_account(req) do
-      {:ok, resp} ->
-        {:ok, %{data: total_count}} = Identity.count_account(req)
-        {:ok, %{data: all_count}} = Identity.count_account(%{req | filter: [], search: nil})
-
-        resp
-        |> Response.put_meta(:total_count, total_count)
-        |> Response.put_meta(:all_count, all_count)
-        |> send_response(conn, :index)
-
-      other ->
-        send_response(other, conn, :index)
-    end
+    conn
+    |> build_request(:index)
+    |> list_and_count(&Identity.list_account/1, &Identity.count_account/1)
+    |> send_response(conn, :index)
   end
 
   # CreateAccount

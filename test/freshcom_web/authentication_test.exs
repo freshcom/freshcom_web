@@ -1,7 +1,7 @@
 defmodule FreshcomWeb.AuthenticationTest do
   use FreshcomWeb.ConnCase
 
-  import Freshcom.{Fixture, Shortcut}
+  import Freshcom.Shortcut
 
   alias Freshcom.Identity
   alias FreshcomWeb.Authentication

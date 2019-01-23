@@ -1,8 +1,7 @@
 defmodule FreshcomWeb.AppController do
   use FreshcomWeb, :controller
-  import FreshcomWeb.Controller
 
-  alias Freshcom.{Identity, Response}
+  alias Freshcom.Identity
 
   action_fallback FreshcomWeb.FallbackController
 
@@ -10,21 +9,10 @@ defmodule FreshcomWeb.AppController do
 
   # ListApp
   def index(conn, _) do
-    req = build_request(conn, :index)
-
-    case Identity.list_app(req) do
-      {:ok, resp} ->
-        {:ok, %{data: total_count}} = Identity.count_app(req)
-        {:ok, %{data: all_count}} = Identity.count_app(%{req | filter: [], search: nil})
-
-        resp
-        |> Response.put_meta(:total_count, total_count)
-        |> Response.put_meta(:all_count, all_count)
-        |> send_response(conn, :index)
-
-      other ->
-        send_response(other, conn, :index)
-    end
+    conn
+    |> build_request(:index)
+    |> list_and_count(&Identity.list_app/1, &Identity.count_app/1)
+    |> send_response(conn, :index)
   end
 
   # AddApp
