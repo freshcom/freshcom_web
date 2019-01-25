@@ -12,6 +12,7 @@ defmodule FreshcomWeb.UserController do
   def index(conn, _) do
     conn
     |> build_request(:index)
+    |> normalize_request(:filter, "role", &underscore/1)
     |> list_and_count(&Identity.list_user/1, &Identity.count_user/1)
     |> send_response(conn, :index)
   end
