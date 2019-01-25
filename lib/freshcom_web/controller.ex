@@ -2,7 +2,7 @@ defmodule FreshcomWeb.Controller do
   import Plug.Conn, only: [put_status: 2, send_resp: 3]
   import Phoenix.Controller, only: [render: 3]
   import FCSupport.Normalization, only: [normalize_by: 5]
-  import FreshcomWeb.Normalization, only: [camelize_keys: 1, to_jsonapi_errors: 1]
+  import FreshcomWeb.Normalization
 
   alias JaSerializer.Params
   alias Freshcom.{Request, Response, Filter}
@@ -10,12 +10,16 @@ defmodule FreshcomWeb.Controller do
   def build_request(conn, action, opts \\ [])
 
   def build_request(%{assigns: assigns, params: params}, :index, _) do
+    filter =
+      Jason.decode!(params["filter"] || "[]")
+      |> underscore_keys()
+
     %Request{
       requester_id: assigns[:requester_id],
       client_id: assigns[:client_id],
       account_id: assigns[:account_id],
       search: params["search"],
-      filter: params["filter"] || [],
+      filter: filter,
       pagination: assigns[:pagination],
       include: params["include"],
       locale: params["locale"]

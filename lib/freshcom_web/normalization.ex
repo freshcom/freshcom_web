@@ -13,6 +13,21 @@ defmodule FreshcomWeb.Normalization do
     Inflex.underscore(str)
   end
 
+  @doc """
+  Recursively underscore the keys of a given map.
+  """
+  def underscore_keys(map) when is_map(map) do
+    Enum.reduce(map, %{}, fn({key, value}, acc) ->
+      Map.put(acc, underscore(key), underscore_keys(value))
+    end)
+  end
+
+  def underscore_keys(list) when is_list(list) do
+    Enum.map(list, &underscore_keys/1)
+  end
+
+  def underscore_keys(item), do: item
+
   def camelize(str) do
     Inflex.camelize(str, :lower)
   end
