@@ -107,6 +107,42 @@ defmodule FreshcomWeb.StockableControllerTest do
     end
   end
 
+  describe "(RetrieveStockable) GET /v1/stockables/:id" do
+    test "given no access token", %{conn: conn} do
+      conn = get(conn, "/v1/stockables/#{uuid4()}")
+
+      assert conn.status == 401
+    end
+
+    test "given unauthorized uat", %{conn: conn} do
+      %{default_account_id: account_id} = standard_user()
+      requester = managed_user(account_id, role: "customer")
+      client = standard_app(account_id)
+      uat = get_uat(account_id, requester.id, client.id)
+
+      stockable = stockable(account_id)
+
+      conn = put_req_header(conn, "authorization", "Bearer #{uat}")
+      conn = get(conn, "/v1/stockables/#{stockable.id}")
+
+      assert conn.status == 403
+    end
+
+    test "given valid uat", %{conn: conn} do
+      requester = standard_user()
+      client = standard_app(requester.default_account_id)
+      uat = get_uat(requester.default_account_id, requester.id, client.id)
+
+      stockable = stockable(requester.default_account_id)
+
+      conn = put_req_header(conn, "authorization", "Bearer #{uat}")
+      conn = get(conn, "/v1/stockables/#{stockable.id}")
+
+      assert response = json_response(conn, 200)
+      assert response["data"]["id"] == stockable.id
+    end
+  end
+
   # describe "(UpdateApp) PATCH /v1/apps/:id" do
   #   test "given no access token", %{conn: conn} do
   #     conn = patch(conn, "/v1/apps/#{uuid4()}")

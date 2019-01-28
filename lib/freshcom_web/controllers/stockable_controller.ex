@@ -31,6 +31,14 @@ defmodule FreshcomWeb.StockableController do
     |> send_response(conn, :show)
   end
 
+  # RetrieveStockable
+  def show(conn, %{"id" => _}) do
+    conn
+    |> build_request(:show)
+    |> Goods.get_stockable()
+    |> send_response(conn, :show)
+  end
+
   # # DeleteStockable
   # def delete(conn, _) do
   #   conn
