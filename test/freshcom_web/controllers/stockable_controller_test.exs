@@ -195,39 +195,39 @@ defmodule FreshcomWeb.StockableControllerTest do
     end
   end
 
-  # describe "(DeleteApp) DELETE /v1/apps/:id" do
-  #   test "given no access token", %{conn: conn} do
-  #     conn = delete(conn, "/v1/apps/#{uuid4()}")
+  describe "(DeleteStockable) DELETE /v1/stockables/:id" do
+    test "given no access token", %{conn: conn} do
+      conn = delete(conn, "/v1/stockables/#{uuid4()}")
 
-  #     assert conn.status == 401
-  #   end
+      assert conn.status == 401
+    end
 
-  #   test "given unauthorized uat", %{conn: conn} do
-  #     %{default_account_id: account_id} = standard_user()
-  #     requester = managed_user(account_id, role: "support_specialist")
-  #     client = system_app()
-  #     uat = get_uat(account_id, requester.id, client.id)
+    test "given unauthorized uat", %{conn: conn} do
+      %{default_account_id: account_id} = standard_user()
+      requester = managed_user(account_id, role: "support_specialist")
+      client = standard_app(account_id)
+      uat = get_uat(account_id, requester.id, client.id)
 
-  #     app = standard_app(account_id)
+      stockable = stockable(account_id)
 
-  #     conn = put_req_header(conn, "authorization", "Bearer #{uat}")
-  #     conn = delete(conn, "/v1/apps/#{app.id}")
+      conn = put_req_header(conn, "authorization", "Bearer #{uat}")
+      conn = delete(conn, "/v1/stockables/#{stockable.id}")
 
-  #     assert conn.status == 403
-  #   end
+      assert conn.status == 403
+    end
 
-  #   test "given valid uat", %{conn: conn} do
-  #     requester = standard_user()
-  #     account_id = requester.default_account_id
-  #     client = system_app()
-  #     uat = get_uat(account_id, requester.id, client.id)
+    test "given valid uat", %{conn: conn} do
+      requester = standard_user()
+      account_id = requester.default_account_id
+      client = standard_app(account_id)
+      uat = get_uat(account_id, requester.id, client.id)
 
-  #     app = standard_app(account_id)
+      stockable = stockable(account_id)
 
-  #     conn = put_req_header(conn, "authorization", "Bearer #{uat}")
-  #     conn = delete(conn, "/v1/apps/#{app.id}")
+      conn = put_req_header(conn, "authorization", "Bearer #{uat}")
+      conn = delete(conn, "/v1/stockables/#{stockable.id}")
 
-  #     assert conn.status == 204
-  #   end
-  # end
+      assert conn.status == 202
+    end
+  end
 end

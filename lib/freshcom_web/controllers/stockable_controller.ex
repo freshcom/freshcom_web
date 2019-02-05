@@ -39,11 +39,11 @@ defmodule FreshcomWeb.StockableController do
     |> send_response(conn, :show)
   end
 
-  # # DeleteStockable
-  # def delete(conn, _) do
-  #   conn
-  #   |> build_request(:delete, identifier: ["id"])
-  #   |> Goods.delete_stockable()
-  #   |> send_response(conn, :delete, status: :no_content)
-  # end
+  # DeleteStockable
+  def delete(conn, _) do
+    conn
+    |> build_request(:delete, identifier: ["id"])
+    |> Goods.delete_stockable()
+    |> send_response(conn, :delete, status: :accepted)
+  end
 end
